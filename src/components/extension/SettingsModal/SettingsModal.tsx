@@ -3,10 +3,8 @@ import {
    ModalContent,
    ModalHeader,
    ModalBody,
-   ModalFooter
 } from "@nextui-org/modal";
 import {Select, SelectItem} from "@nextui-org/select";
-import {Button} from "@nextui-org/button";
 import {useAiSettings} from "../../../providers/AiSettingsProvider.tsx";
 import {supportedAPIs} from "../../../data/llm-apis.ts";
 import {Input} from "@nextui-org/input";
@@ -38,7 +36,7 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
          scrollBehavior="inside"
       >
          <ModalContent>
-            {(onClose) => (
+            {(_onClose) => (
                <>
                   <ModalHeader className="flex flex-col gap-1">Configure Extension</ModalHeader>
                   <ModalBody className="flex flex-col gap-6">
