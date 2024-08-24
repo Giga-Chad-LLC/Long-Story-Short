@@ -1,17 +1,18 @@
 import {Chip} from "@nextui-org/chip";
 import {Button} from "@nextui-org/button";
 import {Tooltip} from "@nextui-org/tooltip";
-import {useSummarizationSettings} from "../../../providers/SummarizationSettingsProvider.tsx";
-import {ISummarizationInstruction} from "../../../providers/types.ts";
 import cn from "classnames";
 import {PromptTextarea} from "../PromptTextarea/PromptTextarea.tsx";
 import {useCallback} from "react";
 import * as browser from "webextension-polyfill";
-import {Message} from "../../../types";
+import {ISummarizationInstruction, Message} from "../../../types";
+import {useAtom} from "@reatom/npm-react";
+import {summarizationInstructionsAtom} from "../../../store/settings/summarization/SummarizationInstructionsAtom.ts";
 
 
 const SummarizationSettings = () => {
-  const {summarizationSettings, changeSummarizationSettings} = useSummarizationSettings();
+  // const {summarizationSettings, changeSummarizationSettings} = useSummarizationSettings();
+   const [instructions, setInstructions] = useAtom(summarizationInstructionsAtom);
 
   const handleClick = useCallback(async () => {
     const [tab] = await browser.tabs.query({active: true, currentWindow: true});
@@ -27,21 +28,18 @@ const SummarizationSettings = () => {
     <div className="flex flex-col gap-8">
       <PromptTextarea/>
 
-      {/** chips */}
       <div>
         <h3>Select summarization style</h3>
         <ChipsContainer
-          instructions={summarizationSettings.instructions}
-          onChipClick={(item) => {
-            // toggle selection state of the clicked item
-            const updatedInstructions = summarizationSettings.instructions
-              .map(other => ({
-                ...other,
-                selected: (other.id === item.id) ? !other.selected : other.selected,
-              }));
-
-            changeSummarizationSettings("instructions", updatedInstructions);
-          }}
+          instructions={instructions}
+          onChipClick={(item) => setInstructions(prev => (
+             // toggle selection state of the clicked item
+             prev.map(other => ({
+                  ...other,
+                  selected: (other.id === item.id) ? !other.selected : other.selected,
+               }))
+            ))
+          }
         />
       </div>
 
@@ -54,13 +52,13 @@ const SummarizationSettings = () => {
 };
 
 
-interface ChipsBlockProps {
+interface ChipsContainerProps {
   className?: string;
   instructions: ISummarizationInstruction[]
   onChipClick: (item: ISummarizationInstruction) => void
 }
 
-const ChipsContainer = ({className, instructions, onChipClick}: ChipsBlockProps) => {
+const ChipsContainer = ({className, instructions, onChipClick}: ChipsContainerProps) => {
   return (
     <div className={cn(
       "flex flex-wrap gap-2",

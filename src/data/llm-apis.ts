@@ -1,12 +1,6 @@
+import {SupportedAiAPI} from "../types";
 
-export type SupportedApiId = "OPEN_API" | "HUGGING_FACE"
-
-export interface SupportedAPI {
-   id: SupportedApiId
-   label: string
-}
-
-export const supportedAPIs: SupportedAPI[] = [
+export const supportedAiAPIs: SupportedAiAPI[] = [
    {
       id: "OPEN_API",
       label: "OpenAI",

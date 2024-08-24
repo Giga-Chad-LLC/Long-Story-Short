@@ -2,7 +2,7 @@ import SummarizationSettings from "../../components/extension/SummarizationSetti
 import cn from "classnames";
 import Header from "../../components/extension/Header/Header.tsx";
 import {useDisclosure} from "@nextui-org/modal";
-import SettingsModal from "../../components/extension/SettingsModal/SettingsModal.tsx";
+import AiSettingsModal from "../../components/extension/AiSettingsModal/AiSettingsModal.tsx";
 
 
 interface MainProps {
@@ -26,7 +26,7 @@ const Main = ({ domain }: MainProps) => {
          </div>
 
          <span className="font-light">{domain ? domain : "No website viewed"}</span>
-         <SettingsModal isOpen={isOpen} onOpenChange={onOpenChange} />
+         <AiSettingsModal isOpen={isOpen} onOpenChange={onOpenChange} />
       </div>
    );
 };

@@ -1,8 +1,6 @@
 import React, {createContext, useContext, useState} from "react";
-import {SupportedApiId} from "../data/llm-apis.ts";
 
 interface IAiSettings {
-   api: SupportedApiId | null
    model: string | null
    token: string
 }
@@ -18,7 +16,6 @@ interface IAiSettingsContext {
 const AiSettingsContext = createContext<IAiSettingsContext | null>(null);
 
 const initialAiSettings: IAiSettings = {
-   api: "OPEN_API",
    model: null,
    token: "",
 }
