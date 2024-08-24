@@ -2,7 +2,7 @@ import {
    Modal,
    ModalContent,
    ModalHeader,
-   ModalBody,
+   ModalBody, ModalFooter,
 } from "@nextui-org/modal";
 import {Select, SelectItem} from "@nextui-org/select";
 import {useAiSettings} from "../../../providers/AiSettingsProvider.tsx";
@@ -98,9 +98,9 @@ const SettingsModal = ({ isOpen, onOpenChange }: SettingsModalProps) => {
                      />
                   </ModalBody>
 
-                  {/*<ModalFooter>
-                     <Button color="danger" variant="light" onPress={onClose}>Dismiss</Button>
-                  </ModalFooter>*/}
+                  <ModalFooter>
+                     {/*<Button color="danger" variant="light" onPress={onClose}>Dismiss</Button>*/}
+                  </ModalFooter>
                </>
             )}
          </ModalContent>
