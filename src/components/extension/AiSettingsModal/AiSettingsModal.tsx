@@ -5,12 +5,12 @@ import {
   ModalBody, ModalFooter,
 } from "@nextui-org/modal";
 import {Select, SelectItem} from "@nextui-org/select";
-import {useAiSettings} from "../../../providers/AiSettingsProvider.tsx";
 import {supportedAiAPIs} from "../../../data/llm-apis.ts";
 import {Input} from "@nextui-org/input";
-import {useEffect} from "react";
 import {aiApiAtom} from "../../../store/settings/ai/ApiAtom.ts";
 import {useAtom} from "@reatom/npm-react";
+import {tokenAtom} from "../../../store/settings/ai/TokenAtom.ts";
+import {modelAtom} from "../../../store/settings/ai/ModelAtom.ts";
 
 
 interface SettingsModalProps {
@@ -23,12 +23,9 @@ const models = [{label: "gpt-4o"}, {label: "gpt-4-turbo"}];
 
 
 const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
-  const {settings, changeAiSettings} = useAiSettings()
-  const [aiApi, setAiApi] = useAtom(aiApiAtom)
-
-  useEffect(() => {
-    console.log(settings, aiApi)
-  }, [settings, aiApi]);
+  const [aiApi, setAiApi] = useAtom(aiApiAtom);
+  const [aiModel, setAiModel] = useAtom(modelAtom);
+  const [token, setToken] = useAtom(tokenAtom);
 
   return (
     // TODO: dark mode for Modal not working
@@ -71,7 +68,6 @@ const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
                 {(api) => <SelectItem key={api.id}>{api.label}</SelectItem>}
               </Select>
 
-
               <Select
                 items={models}
                 label="API's Model"
@@ -81,14 +77,10 @@ const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
                   label: "font-bold text-base",
                 }}
                 defaultSelectedKeys={
-                  models
-                    .filter(model => model.label === settings.model)
+                  models.filter(model => model.label === aiModel)
                     .map(model => model.label)
                 }
-                onChange={(event) => {
-                  const value = (event.target.value === '') ? null : event.target.value;
-                  changeAiSettings("model", value);
-                }}
+                onChange={(event) => setAiModel(event.target.value)}
               >
                 {(model) => <SelectItem key={model.label}>{model.label}</SelectItem>}
               </Select>
@@ -98,11 +90,11 @@ const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
                 label="API Token"
                 labelPlacement="outside"
                 placeholder="Enter your API token"
-                value={settings.token}
+                value={token}
                 classNames={{
                   label: "font-bold text-base",
                 }}
-                onChange={(event) => changeAiSettings("token", event.target.value)}
+                onValueChange={(value) => setToken(value)}
               />
             </ModalBody>
 
