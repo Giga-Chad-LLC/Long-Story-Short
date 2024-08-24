@@ -5,24 +5,25 @@ function App() {
       const [tab] = await chrome.tabs.query({ active: true })
 
       if (!tab.id) {
-         alert("No tab id available")
+         alert("No tab id available");
          return;
       }
 
       await chrome.scripting.executeScript({
          target: { tabId: tab.id },
          func: () => {
-            alert("My Extension!")
+            /**
+             * Access DOM elements of the active tab
+             */
+            document.body.style.backgroundColor = "purple"
+            alert("My Extension HEEEERRREE!!!!")
          },
       });
    }
 
   return (
      <>
-        <h1 className="text-center text-3xl font-bold underline">
-           Hello world!!!
-        </h1>
-        <button onClick={() => onClick()}>Click!</button>
+        <button className="text-center" onClick={() => onClick()}>Click!</button>
      </>
   )
 }
