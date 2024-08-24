@@ -4,7 +4,7 @@
   "name": "Long Story Short",
   "action": {
     "default_popup": "index.html",
-    "default_icon": "icon32.svg"
+    "default_icon": "icon32.png"
   },
   "permissions": [
     "scripting"
@@ -14,6 +14,6 @@
     "https://*/*"
   ],
   "icons": {
-    "32": "./icon32.svg"
+    "32": "./icon32.png"
   }
 }
