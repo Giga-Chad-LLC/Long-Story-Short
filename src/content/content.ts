@@ -3,7 +3,7 @@ import ContentPage from "./pages/ContentPage";
 import {Message} from "../types";
 import {mountReactElement} from "../util/mountReactElement.tsx";
 
-console.log("Контентный скрипт загружен.");
+console.log("Content script successfully loaded");
 
 browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
   const msg = message as Message;
