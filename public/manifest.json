@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "name": "Long Story Short",
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "index.html",
+    "default_icon": "icon32.svg"
   },
   "permissions": [
     "scripting"
