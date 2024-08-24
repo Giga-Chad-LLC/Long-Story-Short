@@ -1,37 +1,17 @@
-import {cn} from "./lib/utils.ts";
-import Main from "./pages/extension/Main.tsx";
-import {useDarkMode} from "./providers/DarkModeProvider.tsx";
+import cn from "classnames";
+import Main from "./extension/pages/Main.tsx";
+import {useAtom} from "@reatom/npm-react";
+import {darkModeAtom} from "./store/darkModeAtom.ts";
 
 function App() {
-   const { darkMode } = useDarkMode();
-
-   // @ts-ignore
-   const onClick = async () => {
-      const [tab] = await chrome.tabs.query({ active: true })
-
-      if (!tab.id) {
-         alert("No tab id available");
-         return;
-      }
-
-      await chrome.scripting.executeScript({
-         target: { tabId: tab.id },
-         func: () => {
-            /**
-             * Access DOM elements of the active tab
-             */
-            document.body.style.backgroundColor = "purple"
-         },
-      });
-   }
-
+  const [darkMode] = useAtom(darkModeAtom);
   return (
-     <div className={cn(
-        darkMode ? "dark" : "",
-        "text-foreground bg-background h-screen",
-     )}>
-        <Main domain={"google.com"} />
-     </div>
+    <div className={cn(
+      darkMode ? "dark" : "",
+      "text-foreground bg-background h-screen",
+    )}>
+      <Main domain={"google.com"}/>
+    </div>
   )
 }
 

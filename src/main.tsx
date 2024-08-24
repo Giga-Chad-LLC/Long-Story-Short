@@ -5,21 +5,24 @@ import {NextUIProvider} from "@nextui-org/system";
 import App from './App.tsx'
 import './styles/globals.css'
 import {SummarizationSettingsProvider} from "./providers/SummarizationSettingsProvider.tsx";
-import {DarkModeProvider} from "./providers/DarkModeProvider.tsx";
 import {AiSettingsProvider} from "./providers/AiSettingsProvider.tsx";
+import {reatomContext} from '@reatom/npm-react';
+import {createCtx} from "@reatom/core";
+
+const ctx = createCtx()
 
 
 createRoot(document.getElementById('root')!).render(
-   <StrictMode>
+  <reatomContext.Provider value={ctx}>
+    <StrictMode>
       {/*TODO: use withProviders */}
       <AiSettingsProvider>
-         <DarkModeProvider>
-            <SummarizationSettingsProvider>
-               <NextUIProvider>
-                  <App />
-               </NextUIProvider>
-            </SummarizationSettingsProvider>
-         </DarkModeProvider>
+        <SummarizationSettingsProvider>
+          <NextUIProvider>
+            <App/>
+          </NextUIProvider>
+        </SummarizationSettingsProvider>
       </AiSettingsProvider>
-   </StrictMode>,
+    </StrictMode>
+  </reatomContext.Provider>
 )

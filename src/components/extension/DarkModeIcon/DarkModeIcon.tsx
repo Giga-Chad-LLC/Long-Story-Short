@@ -1,22 +1,18 @@
-import {useDarkMode} from "../../../providers/DarkModeProvider.tsx";
+import {useAtom} from "@reatom/npm-react";
+import {darkModeAtom} from "../../../store/darkModeAtom.ts";
+import {MoonIcon, SunIcon} from "../../../shared/icons";
 
-const DarkModeIcon = () => {
-   const { darkMode, toggleDarkMode } = useDarkMode()
-
-
-   return (
-   <div className="h-[20px] w-[20px]" onClick={() => toggleDarkMode()}>
-      {
-         !darkMode ? (
-            // moon icon
-            <img alt="Sun icon" src="/icons/moon-black.svg"/>
-         ): (
-            // sun icon
-            <img alt="Sun icon" src="/icons/sun-white.svg" />
-         )
-      }
-   </div>
-   );
+export const DarkModeIcon = () => {
+    const [darkMode, setDarkMode] = useAtom(darkModeAtom);
+    return (
+        <div className={"cursor-pointer"} onClick={() => setDarkMode((state) => !state)}>
+            {
+                darkMode ? (
+                    <SunIcon width={20} height={20} fill={"#fff"}/>
+                ) : (
+                    <MoonIcon width={20} height={20}/>
+                )
+            }
+        </div>
+    );
 };
-
-export default DarkModeIcon;

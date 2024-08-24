@@ -1,5 +1,5 @@
 import SummarizationSettings from "../../components/extension/SummarizationSettings/SummarizationSettings.tsx";
-import {cn} from "../../lib/utils.ts";
+import cn from "classnames";
 import Header from "../../components/extension/Header/Header.tsx";
 import {useDisclosure} from "@nextui-org/modal";
 import SettingsModal from "../../components/extension/SettingsModal/SettingsModal.tsx";

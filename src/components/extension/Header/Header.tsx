@@ -1,6 +1,6 @@
-import DarkModeIcon from "../DarkModeIcon/DarkModeIcon.tsx";
-import {cn} from "../../../lib/utils.ts";
-import SettingsIcon from "../SettingsIcon/SettingsIcon.tsx";
+import {DarkModeIcon} from "../DarkModeIcon/DarkModeIcon.tsx";
+import cn from "classnames";
+import {SettingsIcon} from "../SettingsIcon/SettingsIcon.tsx";
 
 interface HeaderProps {
    className?: string;

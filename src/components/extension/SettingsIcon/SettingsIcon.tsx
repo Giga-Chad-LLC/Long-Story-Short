@@ -1,25 +1,17 @@
-import {useDarkMode} from "../../../providers/DarkModeProvider.tsx";
+import {GearIcon} from "../../../shared/icons";
+import {useAtom} from "@reatom/npm-react";
+import {darkModeAtom} from "../../../store/darkModeAtom.ts";
 
 interface SettingsIconProps {
-   onClick: () => void;
+  onClick: () => void;
 }
 
-const SettingsIcon = ({ onClick }: SettingsIconProps) => {
-   const { darkMode } = useDarkMode();
+export const SettingsIcon = ({onClick}: SettingsIconProps) => {
+  const [darkMode] = useAtom(darkModeAtom);
 
-   return (
-      <div className="h-[20px] w-[20px]" onClick={() => onClick()}>
-         {
-            !darkMode ? (
-               // moon icon
-               <img alt="Sun icon" src="/icons/gear-black.svg"/>
-            ): (
-               // sun icon
-               <img alt="Sun icon" src="/icons/gear-white.svg" />
-            )
-         }
-      </div>
-   );
+  return (
+    <div className="cursor-pointer" onClick={onClick}>
+      <GearIcon width={20} height={20} fill={darkMode ? "#fff" : "#000"}/>
+    </div>
+  );
 };
-
-export default SettingsIcon;
