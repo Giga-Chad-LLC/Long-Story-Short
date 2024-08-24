@@ -1,5 +1,10 @@
+import {cn} from "./lib/utils.ts";
+import Main from "./pages/extension/Main.tsx";
+import {useDarkMode} from "./providers/DarkModeProvider.tsx";
 
 function App() {
+   const { darkMode } = useDarkMode();
+
    // @ts-ignore
    const onClick = async () => {
       const [tab] = await chrome.tabs.query({ active: true })
@@ -16,15 +21,17 @@ function App() {
              * Access DOM elements of the active tab
              */
             document.body.style.backgroundColor = "purple"
-            alert("My Extension HEEEERRREE!!!!")
          },
       });
    }
 
   return (
-     <>
-        <button className="text-center" onClick={() => onClick()}>Click!</button>
-     </>
+     <div className={cn(
+        darkMode ? "dark" : "",
+        "text-foreground bg-background h-screen",
+     )}>
+        <Main domain={"google.com"} />
+     </div>
   )
 }
 
