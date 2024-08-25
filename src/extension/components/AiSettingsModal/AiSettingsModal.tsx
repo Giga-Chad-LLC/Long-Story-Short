@@ -12,6 +12,9 @@ import {useAtom} from "@reatom/npm-react";
 import {tokenAtom} from "../../../store/settings/ai/TokenAtom.ts";
 import {modelAtom} from "../../../store/settings/ai/ModelAtom.ts";
 import {useEffect} from "react";
+import {encryptToken} from "../../../util/encryptToken.ts";
+import {Tooltip} from "@nextui-org/tooltip";
+import {encryptedTokenAtom} from "../../../store/encryptedTokenAtom.ts";
 
 
 interface SettingsModalProps {
@@ -27,6 +30,8 @@ const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
   const [aiApi, setAiApi] = useAtom(aiApiAtom);
   const [aiModel, setAiModel] = useAtom(modelAtom);
   const [token, setToken] = useAtom(tokenAtom);
+
+  const [, setEncryptedToken] = useAtom(encryptedTokenAtom);
 
   useEffect(() => {
     console.log({
@@ -102,17 +107,30 @@ const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
                 {(model) => <SelectItem key={model.label}>{model.label}</SelectItem>}
               </Select>
 
-              <Input
-                type="password"
-                label="API Token"
-                labelPlacement="outside"
-                placeholder="Enter your API token"
-                value={token}
-                classNames={{
-                  label: "font-bold text-base",
-                }}
-                onValueChange={(value) => setToken(value)}
-              />
+              <Tooltip showArrow={true} delay={500} content="We store encrypted tokens to avoid token leakage on frontend">
+                <Input
+                  type="password"
+                  label="API Token"
+                  labelPlacement="outside"
+                  placeholder="Enter your API token"
+                  value={token}
+                  classNames={{
+                    label: "font-bold text-base",
+                  }}
+                  onValueChange={async (value) => {
+                    if (value) {
+                      // NOTE: store only encrypted token on the frontend to prevent token leakage
+                      const { iv, encryptedToken } = await encryptToken(value);
+                      setEncryptedToken({ iv, encryptedToken });
+                      setToken("*".repeat(value.length));
+                    }
+                    else {
+                      setEncryptedToken(null);
+                      setToken(value);
+                    }
+                  }}
+                />
+              </Tooltip>
             </ModalBody>
 
             <ModalFooter>

@@ -25,14 +25,21 @@ export const Sidebar = ({payload}: SidebarProps) => {
     const queryParams: Record<string, string> = {
       api: payload.request.api,
       model: payload.request.model,
-      token: payload.request.token,
+      iv: payload.iv,
+      encrypted_token: payload.encryptedToken,
       objective: payload.objective,
       text: "This text is about mammoths! They all have died. Unfortunately.",
     }
 
     const params = new URLSearchParams(queryParams);
     // insert instructions
-    payload.instructions.forEach(instruction => params.append("instructions", instruction));
+
+    if (payload.instructions.length > 0) {
+      payload.instructions.forEach(instruction => params.append("instructions", instruction));
+    }
+    else {
+      params.append("instructions", "");
+    }
 
     const query = params.toString();
 
@@ -63,7 +70,11 @@ export const Sidebar = ({payload}: SidebarProps) => {
         }
         return false;
       });
-    });
+    }).catch(err => {
+        console.log(err);
+        alert(`Error occurred: ${err.message}`)
+      });
+    // TODO: should payload be mentioned here?
   }, [setFinished, setAnswerParts]);
 
   const handleCopy = useCallback((text: string) => {

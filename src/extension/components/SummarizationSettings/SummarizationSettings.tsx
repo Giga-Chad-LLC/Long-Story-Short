@@ -13,6 +13,7 @@ import {promptAtom} from "../../../store/settings/summarization/promptAtom.ts";
 import {aiApiAtom} from "../../../store/settings/ai/ApiAtom.ts";
 import {modelAtom} from "../../../store/settings/ai/ModelAtom.ts";
 import {tokenAtom} from "../../../store/settings/ai/TokenAtom.ts";
+import {encryptedTokenAtom} from "../../../store/encryptedTokenAtom.ts";
 
 
 const SummarizationSettings = () => {
@@ -21,10 +22,11 @@ const SummarizationSettings = () => {
 
   const [api] = useAtom(aiApiAtom)
   const [model] = useAtom(modelAtom)
-  const [token] = useAtom(tokenAtom)
 
   const [promptText] = useAtom(promptAtom);
   const [instructions, setInstructions] = useAtom(summarizationInstructionsAtom);
+
+  const [encryptedToken] = useAtom(encryptedTokenAtom);
 
   // TODO: check correctness of this implementation
   useEffect(() => {
@@ -39,8 +41,8 @@ const SummarizationSettings = () => {
   }, [errorMessage]);
 
   const handleClick = useCallback(async () => {
-    if (!api || !model || !token) {
-      setErrorMessage(`Either api, model, or token were are unset (${api ? '' : 'api missing'}, ${model ? '' : 'model missing'}, ${token ? '' : 'token missing'})`);
+    if (!api || !model || !encryptedToken) {
+      setErrorMessage(`Either api, model, or token were are unset (${api ? '' : 'api missing'}, ${model ? '' : 'model missing'}, ${encryptedToken ? '' : 'token missing'})`);
       return;
     }
 
@@ -52,14 +54,15 @@ const SummarizationSettings = () => {
       request: {
         api: api!.id,
         model: model!,
-        token,
       },
+      iv: encryptedToken.iv,
+      encryptedToken: encryptedToken.encryptedToken,
       objective: promptText,
       instructions: instructions
                       .filter(item => item.selected)
                       .map(item => item.instruction),
     });
-  }, [api, model, token, promptText, instructions]);
+  }, [api, model, promptText, instructions, encryptedToken]);
 
   return (
     <div className="flex flex-col gap-8">

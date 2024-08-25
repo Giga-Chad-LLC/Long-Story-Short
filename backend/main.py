@@ -1,31 +1,34 @@
 import os
 import asyncio
 import json
+from dotenv import load_dotenv
 from typing import AsyncGenerator, Literal, Union, List
 
 # from g4f.client import Client
 # from g4f.Provider import Blackbox
-from openai import OpenAI, DefaultHttpxClient
+from openai import OpenAI, DefaultHttpxClient, AuthenticationError
 import httpx
 
 from sse_starlette.sse import EventSourceResponse
 
-from fastapi import FastAPI, Query, Depends
+from fastapi import FastAPI, Query, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from models import RequestModel, SummarizationModel
+from models import RequestModel, SummarizationModel, TokenModel, EncryptedTokenResponse
+from encryption import encrypt_token, decrypt_token
 
 
-proxy_url = "http://uqPrmX:xXHA01@168.181.55.106:8000"
+load_dotenv()
 
+# proxy_url = os.getenv("PROXY_URL")
 # os.environ.setdefault("G4F_PROXY", proxy_url)
 # client = Client()
 
 app = FastAPI()
 
 http_client = DefaultHttpxClient(
-    proxies=proxy_url,
+    proxies=os.getenv("PROXY_URL"),
     transport=httpx.HTTPTransport(local_address="0.0.0.0")
 )
 
@@ -37,32 +40,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.post("/encrypt-token", response_model=EncryptedTokenResponse)
+def hash_token(data: TokenModel):
+    try:
+        encryption_key = os.getenv("ENCRYPTION_KEY")
+        return encrypt_token(data.token, encryption_key)
+    except ValueError as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 class StreamChunk(BaseModel):
     reason: Union[Literal['CHUNK'], Literal['END']]
     content: str
-
-# def comma_separated_to_list(comma_separated_str: str) -> List[str]:
-#     return [item.strip() for item in comma_separated_str.split(",")]
 
 
 def get_query_params(
     api: str = Query(..., description="API parameter"),
     model: str = Query(..., description="Model parameter"),
-    token: str = Query(..., description="Token parameter"),
+    iv: str = Query(..., description="IV parameter"),
+    encrypted_token: str = Query(..., description="Encrypted Token parameter"),
     objective: str = Query(..., description="Objective parameter"),
     text: str = Query(..., description="Text parameter"),
     instructions: List[str] = Query(..., description="Comma-separated list of instructions"),
 ) -> SummarizationModel:
-#     instructions_list = comma_separated_to_list(instructions)
-    print("instructions", instructions)
-
     return SummarizationModel(
-        request=RequestModel(api=api, model=model, token=token),
+        request=RequestModel(api=api, model=model),
+        iv=iv,
+        encrypted_token=encrypted_token,
         objective=objective,
         text=text,
         instructions=instructions,
     )
-
 
 @app.get("/summarize", response_class=EventSourceResponse, responses={
     200: {
@@ -84,9 +94,12 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
     async def response_generator() -> AsyncGenerator[StreamChunk, None]:
         nonlocal data
 
-        # TODO: try catch the implementation
+        # NOTE: token from the user comes encrypted
+        encryption_key = os.getenv("ENCRYPTION_KEY")
+        decrypted_token = decrypt_token(data.iv, data.encrypted_token, encryption_key)
+
         client = OpenAI(
-            api_key=data.request.token,
+            api_key=decrypted_token,
             http_client=http_client,
         )
 
@@ -150,13 +163,15 @@ console.log(greet('World'));
 | engine | engine to be used for processing templates. Handlebars is the default. |
 | ext    | extension to be used for dest files. |"""
 
-        for chunk in response:
-#             content = chunk.choices[0].delta.content
-            content = chunk
+        for chunk in stream:
+            content = chunk.choices[0].delta.content
+            # content = chunk
             if content:
                 yield StreamChunk(reason='CHUNK', content=content)
             else:
                 yield StreamChunk(reason='END', content="")
+
+
 
     async def serialize_response() -> AsyncGenerator[dict, None]:
         async for chunk in response_generator():

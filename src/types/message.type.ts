@@ -5,15 +5,13 @@ export interface SelectorPayload extends PayloadBase {
   selector?: string
 }
 
-export interface EmptyPayload extends PayloadBase {}
-
-
 export interface SummarizationRequestPayload extends PayloadBase {
   request: {
     api: string
     model: string
-    token: string
   }
+  iv: string;
+  encryptedToken: string;
   objective: string
   instructions: string[]
 }
