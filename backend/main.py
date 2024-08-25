@@ -118,41 +118,41 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
         #     stream=True
         # )
 
-#         response = """
-# # Sample Markdown
+        response = """
+# Sample Markdown
 
-# ## Subheading
+## Subheading
 
-# This is a paragraph in **bold** and _italic_.
+This is a paragraph in **bold** and _italic_.
 
-# - Item 1
-# - Item 2
-#   - Subitem 2.1
-#   - Subitem 2.2
+- Item 1
+- Item 2
+  - Subitem 2.1
+  - Subitem 2.2
 
-# 1. Ordered Item 1
-# 2. Ordered Item 2
+1. Ordered Item 1
+2. Ordered Item 2
 
-# ### Code Block
+### Code Block
 
-# ```javascript
-# function greet(name) {
-#   return `Hello, ${name}!`;
-# }
-# console.log(greet('World'));
-# ```
+```javascript
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+console.log(greet('World'));
+```
 
-# ## Tables
+## Tables
 
-# | Option | Description |
-# | ------ | ----------- |
-# | data   | path to data files to supply the data that will be passed into templates. |
-# | engine | engine to be used for processing templates. Handlebars is the default. |
-# | ext    | extension to be used for dest files. |"""
+| Option | Description |
+| ------ | ----------- |
+| data   | path to data files to supply the data that will be passed into templates. |
+| engine | engine to be used for processing templates. Handlebars is the default. |
+| ext    | extension to be used for dest files. |"""
 
-        for chunk in stream:
-            content = chunk.choices[0].delta.content
-
+        for chunk in response:
+#             content = chunk.choices[0].delta.content
+            content = chunk
             if content:
                 yield StreamChunk(reason='CHUNK', content=content)
             else:
