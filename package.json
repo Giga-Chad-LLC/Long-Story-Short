@@ -23,6 +23,7 @@
     "@reatom/npm-react": "^3.8.10",
     "@reatom/persist-web-storage": "^3.4.4",
     "@types/chrome": "^0.0.270",
+    "axios": "^1.7.5",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.30",
