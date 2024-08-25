@@ -2,16 +2,19 @@ import {useEffect, useState} from "react";
 import {parseStreamResponse} from "../../../util/parseStreamResponse.ts";
 import ReactMarkdown from "react-markdown";
 import {SidebarView} from "./SidebarView.tsx";
+import axios from 'axios';
+import {routes, SERVER_API_URL} from "../../../shared/protocol/apis.ts";
 
 
-export const SidebarContent = () => {
+export const Sidebar = () => {
   const [_finished, setFinished] = useState(false);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
   useEffect(() => {
-    // TODO: refactor + re-implement with axios
-    fetch(`http://127.0.0.1:8000/get_answer?query=${"Hello"}`, {
-      method: "GET",
+    axios.get(`${SERVER_API_URL}/${routes.summarize}`, {
+      params: {
+        query: "Hello",
+      },
     }).then(async (res) => {
       await parseStreamResponse(res, (done, data) => {
         if (done) {
