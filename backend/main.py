@@ -48,21 +48,15 @@ def get_query_params(
     model: str = Query(..., description="Model parameter"),
     token: str = Query(..., description="Token parameter"),
     objective: str = Query(..., description="Objective parameter"),
+    text: str = Query(..., description="Text parameter")
 #     instructions: List[str] = Query(..., description="List of instructions"),
 ) -> SummarizationModel:
     return SummarizationModel(
         request=RequestModel(api=api, model=model, token=token),
         objective=objective,
+        text=text,
 #         instructions=instructions,
     )
-
-@app.get("/")
-def test():
-    return {"msg": "hello world ///!"}
-
-@app.get("/test")
-def test():
-    return {"msg": "hello world!"}
 
 
 @app.get("/summarize", response_class=EventSourceResponse, responses={
@@ -85,13 +79,15 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
     async def response_generator() -> AsyncGenerator[StreamChunk, None]:
         nonlocal data
 
+        # TODO: try catch the implementation
         client = OpenAI(
             api_key=data.request.token,
             http_client=http_client,
         )
 
-        response = client.chat.completions.create(
+        stream = client.chat.completions.create(
             model=data.request.model,
+            stream=True,
             messages=[
                 {
                     "role": "system",
@@ -101,8 +97,7 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
                     "role": "system",
                     "content": data.objective,
                 }
-            ] + map(lambda instruction: {"role": "system", "content": instruction}, data.instructions) +\
-            [{
+            ] + [{
                 "role": "user",
                 "content": data.text
             }]
@@ -150,7 +145,7 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
 # | engine | engine to be used for processing templates. Handlebars is the default. |
 # | ext    | extension to be used for dest files. |"""
 
-        for chunk in response:
+        for chunk in stream:
             content = chunk.choices[0].delta.content
 
             if content:
