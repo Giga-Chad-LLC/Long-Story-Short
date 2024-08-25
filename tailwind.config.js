@@ -1,25 +1,26 @@
-import { nextui } from "@nextui-org/theme";
+import {nextui} from "@nextui-org/theme";
 
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: [
-        "./index.html",
-        "./src/**/*.{js,ts,jsx,tsx}",
-        "./node_modules/@nextui-org/theme/dist/components/(button|snippet|code|input|chip|popover|modal|select).js"
-    ],
-    theme: {
-        container: {
-            center: true,
-            padding: "1rem",
-            screens: {},
-        },
-        extend: {
-            colors: {
-                darkblue: "var(--darkblue)",
-            }
-        },
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@nextui-org/theme/dist/components/(button|snippet|code|input|chip|popover|modal|select).js"
+  ],
+  theme: {
+    container: {
+      center: true,
+      padding: "1rem",
+      screens: {},
     },
-    darkMode: "class",
-    plugins: [nextui()],
+    extend: {
+      colors: {
+        darkblue: "var(--darkblue)",
+        lightgray: "var(--lightgray)",
+      }
+    },
+  },
+  darkMode: "class",
+  plugins: [nextui()],
 }
 
