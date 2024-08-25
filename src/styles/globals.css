@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --darkblue: #0c091d;
-    }
+  :root {
+    --darkblue: #0c091d;
+    --lightgray: #f4f4f5;
+  }
 }
 
 /*@layer base {
@@ -25,16 +26,20 @@
 }*/
 
 @layer base {
-    body {
-        @apply /*font-manrope*/ bg-darkblue text-foreground bg-background;
-    }
-    html {
-        @apply scroll-smooth;
-    }
-    h1 {
-        @apply mb-10 font-bold text-3xl;
-    }
-    h3 {
-        @apply mb-2 font-bold text-base;
-    }
+  body {
+    @apply /*font-manrope*/
+    bg-darkblue text-foreground bg-background;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  h1 {
+    @apply mb-10 font-bold text-3xl;
+  }
+
+  h3 {
+    @apply mb-2 font-bold text-base;
+  }
 }

@@ -8,6 +8,8 @@ import {messageActions} from "../data/message-actions.ts";
 
 console.log("Content script successfully loaded");
 
+const sidebarComponentId = "long-story-short-summary-sidebar";
+
 browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
   const msg = message as TabMessage<PayloadBase>;
 
@@ -22,6 +24,11 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
     const payload = msg.payload as SummarizationRequestPayload;
     console.log(payload);
 
+    // sidebar already mounted
+    if (document.getElementById(sidebarComponentId)) {
+      return;
+    }
+
     const body = document.querySelector("body");
     const head = document.querySelector("head");
     if (body === null || head === null) return true;
@@ -34,10 +41,12 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
 
     section.innerHTML = body.innerHTML;
     body.innerHTML = section.outerHTML;
-    body.className = "grid grid-cols-3";
+    body.className = "flex";// "grid grid-cols-3";
 
     // NOTE: render sidebar page
     const sidebar = document.createElement("section");
+    sidebar.id = sidebarComponentId;
+
     mountReactElement(sidebar, ContentPage);
     countAtom(ctx, 100);
     body.appendChild(sidebar);

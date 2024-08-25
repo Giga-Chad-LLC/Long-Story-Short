@@ -1,18 +1,15 @@
 import {useEffect, useState} from "react";
-import {Button} from "@nextui-org/button";
-import {useAtom} from "@reatom/npm-react";
-import {countAtom} from "../../store/countAtom.ts";
 import {parseStreamResponse} from "../../../util/parseStreamResponse.ts";
 import ReactMarkdown from "react-markdown";
+import {SidebarView} from "./SidebarView.tsx";
 
 
-export const Sidebar = () => {
-  const [count, setCount] = useAtom(countAtom);
-
+export const SidebarContent = () => {
   const [_finished, setFinished] = useState(false);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
   useEffect(() => {
+    // TODO: refactor + re-implement with axios
     fetch(`http://127.0.0.1:8000/get_answer?query=${"Hello"}`, {
       method: "GET",
     }).then(async (res) => {
@@ -39,12 +36,9 @@ export const Sidebar = () => {
 
   const message = parts.join("");
 
-  return <>
-    <div>Count: {count}</div>
-    <Button onClick={() => setCount(count => count + 1)}>Add</Button>
-
-    <div>
+  return (
+    <SidebarView>
       <ReactMarkdown>{message}</ReactMarkdown>
-    </div>
-  </>
+    </SidebarView>
+  );
 }
