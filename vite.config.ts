@@ -6,7 +6,7 @@ import webExtension from "vite-plugin-web-extension";
 export default defineConfig({
   build: {
     sourcemap: true, // Включаем source maps для отладки
-    minify: true,
+    minify: false,
   },
   plugins: [
     react(),

@@ -11,6 +11,7 @@ import {aiApiAtom} from "../../../store/settings/ai/ApiAtom.ts";
 import {useAtom} from "@reatom/npm-react";
 import {tokenAtom} from "../../../store/settings/ai/TokenAtom.ts";
 import {modelAtom} from "../../../store/settings/ai/ModelAtom.ts";
+import {useEffect} from "react";
 
 
 interface SettingsModalProps {
@@ -26,6 +27,14 @@ const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
   const [aiApi, setAiApi] = useAtom(aiApiAtom);
   const [aiModel, setAiModel] = useAtom(modelAtom);
   const [token, setToken] = useAtom(tokenAtom);
+
+  useEffect(() => {
+    console.log({
+      api: aiApi,
+      model: aiModel,
+      token,
+    });
+  }, [aiApi, aiModel, token])
 
   return (
     // TODO: dark mode for Modal not working
@@ -80,7 +89,15 @@ const AiSettingsModal = ({isOpen, onOpenChange}: SettingsModalProps) => {
                   models.filter(model => model.label === aiModel)
                     .map(model => model.label)
                 }
-                onChange={(event) => setAiModel(event.target.value)}
+                onChange={(event) => {
+                  const filtered = models.filter(model => model.label === event.target.value);
+                  if (filtered.length > 0) {
+                    setAiModel(event.target.value);
+                  }
+                  else {
+                    setAiModel(null);
+                  }
+                }}
               >
                 {(model) => <SelectItem key={model.label}>{model.label}</SelectItem>}
               </Select>

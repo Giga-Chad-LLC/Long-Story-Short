@@ -1,11 +1,16 @@
-import {Sidebar} from "../../components/Sidebar/Sidebar.tsx";
+import {SidebarContent} from "../../components/Sidebar/SidebarContent.tsx";
 import {NextUIProvider} from "@nextui-org/system";
+import {reatomContext} from '@reatom/npm-react';
+import {ctx} from "../../store/context.ts";
+
 
 const ContentPage = () => {
   return <>
-    <NextUIProvider>
-      <Sidebar/>
-    </NextUIProvider>
+    <reatomContext.Provider value={ctx}>
+      <NextUIProvider>
+        <SidebarContent />
+      </NextUIProvider>
+    </reatomContext.Provider>
   </>
 }
 

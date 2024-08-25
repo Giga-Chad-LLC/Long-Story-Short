@@ -1,3 +1,5 @@
 export * from "./Moon.icon"
 export * from "./Sun.icon"
 export * from "./Gear.icon"
+export * from "./CaretLeft.icon"
+export * from "./CaretRight.icon"
