@@ -44,10 +44,13 @@ const SummarizationSettings = () => {
       return;
     }
 
+    console.log("selected instructions", instructions
+      .filter(item => item.selected))
+
     // send data to content script
     await MessageApi.send<SummarizationRequestPayload>(messageActions.requestSummarization, {
       request: {
-        api: api!.label,
+        api: api!.id,
         model: model!,
         token,
       },
@@ -56,7 +59,7 @@ const SummarizationSettings = () => {
                       .filter(item => item.selected)
                       .map(item => item.instruction),
     });
-  }, [api, model, token]);
+  }, [api, model, token, promptText, instructions]);
 
   return (
     <div className="flex flex-col gap-8">
