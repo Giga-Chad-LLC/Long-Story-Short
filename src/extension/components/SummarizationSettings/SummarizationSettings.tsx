@@ -3,29 +3,64 @@ import {Button} from "@nextui-org/button";
 import {Tooltip} from "@nextui-org/tooltip";
 import cn from "classnames";
 import {PromptTextarea} from "../PromptTextarea/PromptTextarea.tsx";
-import {useCallback} from "react";
-import * as browser from "webextension-polyfill";
-import {ISummarizationInstruction, Message} from "../../../types";
+import {useCallback, useEffect, useState} from "react";
+import {ISummarizationInstruction, SummarizationRequestPayload} from "../../../types";
 import {useAtom} from "@reatom/npm-react";
 import {summarizationInstructionsAtom} from "../../../store/settings/summarization/SummarizationInstructionsAtom.ts";
+import {MessageApi} from "../../../shared/protocol/MessageApi.ts";
+import {messageActions} from "../../../data/message-actions.ts";
+import {promptAtom} from "../../../store/settings/summarization/promptAtom.ts";
+import {aiApiAtom} from "../../../store/settings/ai/ApiAtom.ts";
+import {modelAtom} from "../../../store/settings/ai/ModelAtom.ts";
+import {tokenAtom} from "../../../store/settings/ai/TokenAtom.ts";
 
 
 const SummarizationSettings = () => {
-  // const {summarizationSettings, changeSummarizationSettings} = useSummarizationSettings();
-   const [instructions, setInstructions] = useAtom(summarizationInstructionsAtom);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+
+  const [api] = useAtom(aiApiAtom)
+  const [model] = useAtom(modelAtom)
+  const [token] = useAtom(tokenAtom)
+
+  const [promptText] = useAtom(promptAtom);
+  const [instructions, setInstructions] = useAtom(summarizationInstructionsAtom);
+
+  useEffect(() => {
+    if (errorMessage) {
+      // clear error
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      const id = setTimeout(() => setErrorMessage(null), 5000)
+      setTimeoutId(id);
+    }
+  }, [errorMessage]);
 
   const handleClick = useCallback(async () => {
-    const [tab] = await browser.tabs.query({active: true, currentWindow: true});
-    if (tab.id) {
-      await browser.tabs.sendMessage<Message>(tab.id, {
-        action: "addSidebar",
-        data: ""
-      });
+    if (!api || !model || !token) {
+      setErrorMessage(`Either api, model, or token were are unset (${api ? '' : 'api missing'}, ${model ? '' : 'model missing'}, ${token ? '' : 'token missing'})`);
+      return;
     }
-  }, []);
+
+    await MessageApi.send<SummarizationRequestPayload>(messageActions.requestSummarization, {
+      request: {
+        api: api!.label,
+        model: model!,
+        token,
+      },
+      objective: promptText,
+      instructions: instructions
+                      .filter(item => item.selected)
+                      .map(item => item.instruction),
+    });
+  }, [api, model, token]);
 
   return (
     <div className="flex flex-col gap-8">
+      {/* TODO: how normal error notification */}
+      {errorMessage ? <span className="text-red-700">{errorMessage}</span> : null}
+
       <PromptTextarea/>
 
       <div>
@@ -33,12 +68,12 @@ const SummarizationSettings = () => {
         <ChipsContainer
           instructions={instructions}
           onChipClick={(item) => setInstructions(prev => (
-             // toggle selection state of the clicked item
-             prev.map(other => ({
-                  ...other,
-                  selected: (other.id === item.id) ? !other.selected : other.selected,
-               }))
-            ))
+            // toggle selection state of the clicked item
+            prev.map(other => ({
+              ...other,
+              selected: (other.id === item.id) ? !other.selected : other.selected,
+            }))
+          ))
           }
         />
       </div>

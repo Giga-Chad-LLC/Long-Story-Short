@@ -31,21 +31,24 @@ export const Sidebar = () => {
           responses.forEach((response) => {
             try {
               const chunkText = response.replace("data:", "").trim();
-              const data = JSON.parse(chunkText);
+              if (chunkText) {
+                console.log(chunkText);
+                const data = JSON.parse(chunkText);
 
-              switch (data.reason) {
-                case "CHUNK": {
-                  chunks.push(data.content);
-                  setAnswerParts((prev) => [...prev, data.content]);
-                  break;
-                }
-                case "END": {
-                  setFinished(true);
-                  break;
+                switch (data.reason) {
+                  case "CHUNK": {
+                    chunks.push(data.content);
+                    setAnswerParts((prev) => [...prev, data.content]);
+                    break;
+                  }
+                  case "END": {
+                    setFinished(true);
+                    break;
+                  }
                 }
               }
-            } catch {
-              console.log(parts)
+            } catch(err) {
+              console.error(err)
             }
           });
         }

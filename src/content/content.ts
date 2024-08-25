@@ -1,23 +1,27 @@
 import * as browser from "webextension-polyfill";
 import ContentPage from "./pages/ContentPage";
-import {Message} from "../types";
+import {PayloadBase, SelectorPayload, SummarizationRequestPayload, TabMessage} from "../types";
 import {mountReactElement} from "../util/mountReactElement.tsx";
 import {ctx} from "./store/context.ts";
 import {countAtom} from "./store/countAtom.ts";
+import {messageActions} from "../data/message-actions.ts";
 
 console.log("Content script successfully loaded");
 
 browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
-  const msg = message as Message;
+  const msg = message as TabMessage<PayloadBase>;
 
-  if (msg.action === "getElement" && msg.selector) {
-    const elementHtml = getElement(msg.selector);
+  if (msg.action === "getElement" && (msg.payload as SelectorPayload).selector) {
+    const elementHtml = getElement((msg.payload as SelectorPayload).selector!);
     sendResponse({html: elementHtml});
     return true;
   }
 
-  if (msg.action === "addSidebar" && msg.data !== undefined) {
+  if (msg.action === messageActions.requestSummarization) {
     // NOTE: find body
+    const payload = msg.payload as SummarizationRequestPayload;
+    console.log(payload);
+
     const body = document.querySelector("body");
     const head = document.querySelector("head");
     if (body === null || head === null) return true;
@@ -35,7 +39,7 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
     // NOTE: render sidebar page
     const sidebar = document.createElement("section");
     mountReactElement(sidebar, ContentPage);
-    countAtom(ctx, 20);
+    countAtom(ctx, 100);
     body.appendChild(sidebar);
     return true;
   }
