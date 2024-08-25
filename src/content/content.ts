@@ -2,6 +2,8 @@ import * as browser from "webextension-polyfill";
 import ContentPage from "./pages/ContentPage";
 import {Message} from "../types";
 import {mountReactElement} from "../util/mountReactElement.tsx";
+import {ctx} from "./store/context.ts";
+import {countAtom} from "./store/countAtom.ts";
 
 console.log("Content script successfully loaded");
 
@@ -33,6 +35,7 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
     // NOTE: render sidebar page
     const sidebar = document.createElement("section");
     mountReactElement(sidebar, ContentPage);
+    countAtom(ctx, 20);
     body.appendChild(sidebar);
     return true;
   }
