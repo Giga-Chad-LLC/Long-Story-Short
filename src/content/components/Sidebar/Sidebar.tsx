@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import rehypeKatex from "rehype-katex";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {okaidia} from "react-syntax-highlighter/dist/esm/styles/prism";
 import {parseStreamResponse} from "../../../util/parseStreamResponse.ts";
@@ -73,11 +72,10 @@ export const Sidebar = ({payload}: SidebarProps) => {
 
   const message = parts.join("");
 
-
   return (
     <SidebarView>
       <ReactMarkdown
-        rehypePlugins={[rehypeRaw, rehypeKatex] as PluggableList}
+        rehypePlugins={[rehypeRaw] as PluggableList}
         remarkPlugins={[remarkGfm]}
         components={{
           code({children, className, ...rest}) {
@@ -85,9 +83,10 @@ export const Sidebar = ({payload}: SidebarProps) => {
             return match ? (
               <div className="code-block">
                 <div className="code-block-header text-white flex justify-between p-2">
-                  <span className="code-block-language">{match[1]}</span>
+                  <span className="code-block-language text-zinc-900">{match[1]}</span>
                   <Button
                     size="sm"
+                    color="primary"
                     onClick={() =>
                       handleCopy(String(children).replace(/\n$/, ""))
                     }
