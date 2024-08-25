@@ -2,8 +2,6 @@ import * as browser from "webextension-polyfill";
 import {PayloadBase, TabMessage} from "../../types";
 
 export class MessageApi {
-  constructor() {}
-
   static async send<Payload extends PayloadBase>(action: string, payload: Payload) {
     const [tab] = await browser.tabs.query({active: true, currentWindow: true});
 

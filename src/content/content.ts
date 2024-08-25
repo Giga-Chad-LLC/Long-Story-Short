@@ -47,7 +47,7 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
       body.appendChild(sidebar);
     }
 
-    mountReactElement(sidebar, ContentPage);
+    mountReactElement(sidebar, () => ContentPage({ payload }));
 
     return true;
   }
