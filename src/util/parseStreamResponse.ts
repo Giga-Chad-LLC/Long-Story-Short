@@ -1,12 +1,14 @@
+import {AxiosResponse} from "axios";
+
 /**
  *
  * @param response
  * @param callback returns `true` if the execution should stop, otherwise `false`
  */
-export const parseStreamResponse = async (response: Response, callback: (done: boolean, data: any) => boolean) => {
+export const parseStreamResponse = async (response: AxiosResponse, callback: (done: boolean, data: any) => boolean) => {
   const decoder = new TextDecoder();
 
-  const reader = response.body?.getReader();
+  const reader = response.data.getReader();
   if (!reader) {
     throw new Error("Reader is undefined");
   }

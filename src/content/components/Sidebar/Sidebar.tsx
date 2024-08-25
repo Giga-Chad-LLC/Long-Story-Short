@@ -4,16 +4,27 @@ import ReactMarkdown from "react-markdown";
 import {SidebarView} from "./SidebarView.tsx";
 import axios from 'axios';
 import {routes, SERVER_API_URL} from "../../../shared/protocol/apis.ts";
+import {SummarizationRequestPayload} from "../../../types";
 
 
-export const Sidebar = () => {
+interface SidebarProps {
+  payload: SummarizationRequestPayload
+}
+
+
+export const Sidebar = ({ payload }: SidebarProps) => {
   const [_finished, setFinished] = useState(false);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
   useEffect(() => {
     axios.get(`${SERVER_API_URL}/${routes.summarize}`, {
       params: {
-        query: "Hello",
+        api: payload.request.api,
+        model: payload.request.model,
+        token: payload.request.token,
+        objective: payload.objective,
+        // instructions: payload.instructions,
+        text: "This text is about mammoths! They all have died. Unfortunately.",
       },
     }).then(async (res) => {
       await parseStreamResponse(res, (done, data) => {

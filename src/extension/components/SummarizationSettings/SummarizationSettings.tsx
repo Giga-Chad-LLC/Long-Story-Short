@@ -47,7 +47,7 @@ const SummarizationSettings = () => {
     // send data to content script
     await MessageApi.send<SummarizationRequestPayload>(messageActions.requestSummarization, {
       request: {
-        api: api!.label,
+        api: api!.id,
         model: model!,
         token,
       },
