@@ -41,6 +41,8 @@ class StreamChunk(BaseModel):
     reason: Union[Literal['CHUNK'], Literal['END']]
     content: str
 
+# def comma_separated_to_list(comma_separated_str: str) -> List[str]:
+#     return [item.strip() for item in comma_separated_str.split(",")]
 
 
 def get_query_params(
@@ -48,14 +50,17 @@ def get_query_params(
     model: str = Query(..., description="Model parameter"),
     token: str = Query(..., description="Token parameter"),
     objective: str = Query(..., description="Objective parameter"),
-    text: str = Query(..., description="Text parameter")
-#     instructions: List[str] = Query(..., description="List of instructions"),
+    text: str = Query(..., description="Text parameter"),
+    instructions: List[str] = Query(..., description="Comma-separated list of instructions"),
 ) -> SummarizationModel:
+#     instructions_list = comma_separated_to_list(instructions)
+    print("instructions", instructions)
+
     return SummarizationModel(
         request=RequestModel(api=api, model=model, token=token),
         objective=objective,
         text=text,
-#         instructions=instructions,
+        instructions=instructions,
     )
 
 

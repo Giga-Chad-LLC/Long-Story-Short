@@ -21,11 +21,16 @@ export const Sidebar = ({ payload }: SidebarProps) => {
       model: payload.request.model,
       token: payload.request.token,
       objective: payload.objective,
-      // instructions: payload.instructions,
       text: "This text is about mammoths! They all have died. Unfortunately.",
     }
 
-    const query = new URLSearchParams(queryParams).toString();
+    const params = new URLSearchParams(queryParams);
+    // insert instructions
+    payload.instructions.forEach(instruction => params.append("instructions", instruction));
+
+    const query = params.toString();
+
+    console.log("instructions:", payload.instructions.join(","))
     console.log("query:", query)
 
     fetch(`${SERVER_API_URL}/${routes.summarize}?${query}`, {

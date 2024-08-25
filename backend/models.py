@@ -10,5 +10,5 @@ class RequestModel(BaseModel):
 class SummarizationModel(BaseModel):
     request: RequestModel
     objective: str
-#     instructions: List[str]
+    instructions: List[str]
     text: str
