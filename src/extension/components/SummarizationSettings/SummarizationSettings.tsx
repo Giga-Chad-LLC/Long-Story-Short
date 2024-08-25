@@ -26,6 +26,7 @@ const SummarizationSettings = () => {
   const [promptText] = useAtom(promptAtom);
   const [instructions, setInstructions] = useAtom(summarizationInstructionsAtom);
 
+  // TODO: check correctness of this implementation
   useEffect(() => {
     if (errorMessage) {
       // clear error
@@ -43,6 +44,7 @@ const SummarizationSettings = () => {
       return;
     }
 
+    // send data to content script
     await MessageApi.send<SummarizationRequestPayload>(messageActions.requestSummarization, {
       request: {
         api: api!.label,

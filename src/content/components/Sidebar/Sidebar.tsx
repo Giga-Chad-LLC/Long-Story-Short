@@ -2,9 +2,8 @@ import {useEffect, useState} from "react";
 import {Button} from "@nextui-org/button";
 import {useAtom} from "@reatom/npm-react";
 import {countAtom} from "../../store/countAtom.ts";
+import {parseStreamResponse} from "../../../util/parseStreamResponse.ts";
 
-
-const decoder = new TextDecoder();
 
 export const Sidebar = () => {
   const [count, setCount] = useAtom(countAtom);
@@ -16,47 +15,24 @@ export const Sidebar = () => {
     fetch(`http://127.0.0.1:8000/get_answer?query=${"Hello"}`, {
       method: "GET",
     }).then(async (res) => {
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("Reader is undefined");
-
-      let done = false;
-      const chunks = new Array<string>();
-
-      while (!done) {
-        const {value, done: isDone} = await reader.read();
-        done = isDone;
-
-        if (value) {
-          const responses = decoder.decode(value).split("\n");
-          responses.forEach((response) => {
-            try {
-              const chunkText = response.replace("data:", "").trim();
-              if (chunkText) {
-                console.log(chunkText);
-                const data = JSON.parse(chunkText);
-
-                switch (data.reason) {
-                  case "CHUNK": {
-                    chunks.push(data.content);
-                    setAnswerParts((prev) => [...prev, data.content]);
-                    break;
-                  }
-                  case "END": {
-                    setFinished(true);
-                    break;
-                  }
-                }
-              }
-            } catch(err) {
-              console.error(err)
-            }
-          });
-        }
-
+      await parseStreamResponse(res, (done, data) => {
         if (done) {
           setFinished(true);
+          return true;
         }
-      }
+
+        switch (data.reason) {
+          case "CHUNK": {
+            setAnswerParts((prev) => [...prev, data.content]);
+            break;
+          }
+          case "END": {
+            setFinished(true);
+            break;
+          }
+        }
+        return false;
+      });
     });
   }, []);
 
