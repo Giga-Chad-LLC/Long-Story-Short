@@ -92,7 +92,7 @@ console.log(greet('World'));
 
         for chunk in response.split(' '):
 #             content = chunk.choices[0].delta.content
-            content = chunk
+            content = f"{chunk} "
             await asyncio.sleep(0.002)
             if content:
                 yield StreamChunk(reason='CHUNK', content=content)

@@ -3,12 +3,13 @@ import {Button} from "@nextui-org/button";
 import {useAtom} from "@reatom/npm-react";
 import {countAtom} from "../../store/countAtom.ts";
 import {parseStreamResponse} from "../../../util/parseStreamResponse.ts";
+import ReactMarkdown from "react-markdown";
 
 
 export const Sidebar = () => {
   const [count, setCount] = useAtom(countAtom);
 
-  const [finished, setFinished] = useState(false);
+  const [_finished, setFinished] = useState(false);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
   useEffect(() => {
@@ -41,7 +42,9 @@ export const Sidebar = () => {
   return <>
     <div>Count: {count}</div>
     <Button onClick={() => setCount(count => count + 1)}>Add</Button>
-    Done: {finished ? "true" : "false"}
-    Message:<br/>{message}
+
+    <div>
+      <ReactMarkdown>{message}</ReactMarkdown>
+    </div>
   </>
 }
