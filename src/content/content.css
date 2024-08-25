@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#long-story-short-summary-sidebar table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#long-story-short-summary-sidebar th, #long-story-short-summary-sidebar td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#long-story-short-summary-sidebar th {
+  background-color: #f4f4f4;
+}
