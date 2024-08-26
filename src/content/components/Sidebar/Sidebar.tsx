@@ -13,6 +13,8 @@ import {PluggableList} from "react-markdown/lib/react-markdown";
 import {domElementToText} from "../../../util";
 import {BODY_COMPONENT_CLASSNAME} from "../../constants.ts";
 import { readingTime } from 'reading-time-estimator';
+import {useAtom} from "@reatom/npm-react";
+import {readingStatsAtom} from "../../store/readingStats.ts";
 
 
 interface SidebarProps {
@@ -21,7 +23,7 @@ interface SidebarProps {
 
 
 export const Sidebar = ({payload}: SidebarProps) => {
-  const [finished, setFinished] = useState(false);
+  const [,setStats] = useAtom(readingStatsAtom);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
   useEffect(() => {
@@ -55,7 +57,6 @@ export const Sidebar = ({payload}: SidebarProps) => {
     }).then(async (res) => {
       await parseStreamResponse(res, (done, data) => {
         if (done) {
-          setFinished(true);
           return true;
         }
 
@@ -65,14 +66,13 @@ export const Sidebar = ({payload}: SidebarProps) => {
             break;
           }
           case "END": {
-            setFinished(true);
             break;
           }
         }
         return false;
       });
     });
-  }, [setFinished, setAnswerParts, payload]);
+  }, [setAnswerParts, payload]);
 
   const handleCopy = useCallback((text: string) => {
     navigator.clipboard.writeText(text);
@@ -80,18 +80,12 @@ export const Sidebar = ({payload}: SidebarProps) => {
 
   const message = parts.join("");
 
-  const stats = readingTime(message, 140 /* average reading speed per minute */, "en");
+  useEffect(() => {
+    setStats(readingTime(message, 140 /* average reading speed per minute */, "en"))
+  }, [setStats, message]);
 
   return (
     <SidebarView>
-      {
-        finished && (
-          <div className="mb-2">
-            <span className="italic text-sm text-zinc-600">{stats.text}, {stats.words} words</span>
-          </div>
-        )
-      }
-
       <ReactMarkdown
         className={"prose prose-pre:p-0 prose-pre:bg-zinc-700"}
         rehypePlugins={[rehypeRaw] as PluggableList}

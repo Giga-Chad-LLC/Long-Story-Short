@@ -105,7 +105,7 @@ const ChipsContainer = ({className, instructions, onChipClick}: ChipsContainerPr
       className,
     )}>
       {instructions.map((item, index) => (
-        <Tooltip key={index} showArrow={true} delay={1200} content={item.description}>
+        <Tooltip key={index} placement={index > 2 ? "bottom" : "top"} showArrow={true} delay={1200} content={item.description}>
           <Chip
             color={item.selected ? "primary" : "default"}
             variant="shadow"
