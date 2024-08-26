@@ -12,6 +12,7 @@ import {Button} from "@nextui-org/button";
 import {PluggableList} from "react-markdown/lib/react-markdown";
 import {domElementToText} from "../../../util";
 import {BODY_COMPONENT_CLASSNAME} from "../../constants.ts";
+import { readingTime } from 'reading-time-estimator';
 
 
 interface SidebarProps {
@@ -20,7 +21,7 @@ interface SidebarProps {
 
 
 export const Sidebar = ({payload}: SidebarProps) => {
-  const [, setFinished] = useState(false);
+  const [finished, setFinished] = useState(false);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
   const body = document.querySelector('body > section.' + BODY_COMPONENT_CLASSNAME);
@@ -79,8 +80,18 @@ export const Sidebar = ({payload}: SidebarProps) => {
 
   const message = parts.join("");
 
+  const stats = readingTime(message, 140 /* average reading speed per minute */, "en");
+
   return (
     <SidebarView>
+      {
+        finished && (
+          <div className="mb-2">
+            <span className="italic text-sm text-zinc-600">{stats.text}, {stats.words} words</span>
+          </div>
+        )
+      }
+
       <ReactMarkdown
         rehypePlugins={[rehypeRaw] as PluggableList}
         remarkPlugins={[remarkGfm]}
