@@ -1,12 +1,12 @@
 import * as browser from "webextension-polyfill";
 import ContentPage from "./pages/ContentPage";
 import {PayloadBase, SelectorPayload, SummarizationRequestPayload, TabMessage} from "../types";
-import {mountReactElement} from "../util/mountReactElement.tsx";
+import {mountReactElement} from "../util";
 import {messageActions} from "../data/message-actions.ts";
+import {BODY_COMPONENT_CLASSNAME, SIDEBAR_COMPONENT_ID} from "./constants.ts";
 
 console.log("Content script successfully loaded");
 
-const sidebarComponentId = "long-story-short-summary-sidebar";
 
 browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
   const msg = message as TabMessage<PayloadBase>;
@@ -23,7 +23,7 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
     console.log(payload);
 
     // sidebar already mounted
-    let sidebar = document.getElementById(sidebarComponentId)
+    let sidebar = document.getElementById(SIDEBAR_COMPONENT_ID)
 
     if (!sidebar) {
       const body = document.querySelector("body");
@@ -33,6 +33,7 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
       // NOTE: pack body content to section
       const section = document.createElement("section");
       section.className = body.className;
+      section.classList.add(BODY_COMPONENT_CLASSNAME);
       section.classList.add("relative");
       section.classList.add("col-span-2");
       section.innerHTML = body.innerHTML;
@@ -42,7 +43,7 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
 
       // NOTE: render sidebar page
       sidebar = document.createElement("section");
-      sidebar.id = sidebarComponentId;
+      sidebar.id = SIDEBAR_COMPONENT_ID;
 
       body.appendChild(sidebar);
     }

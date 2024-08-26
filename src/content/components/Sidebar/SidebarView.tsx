@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSidebar } from './useSidebar';
+import {useSidebar} from './useSidebar';
 import cn from "classnames";
 import {CaretLeft, CaretRight} from "../../../shared/icons";
 
@@ -11,12 +11,12 @@ interface SidebarProps {
 }
 
 export const SidebarView: React.FC<SidebarProps> = ({
-  initialWidth = 300,
-  minWidth = 200,
-  maxWidth = 600,
-  children,
-}) => {
-  const { isOpen, width, closeSidebar, openSidebar, handleResize } = useSidebar({
+                                                      initialWidth = 300,
+                                                      minWidth = 200,
+                                                      maxWidth = 600,
+                                                      children,
+                                                    }) => {
+  const {isOpen, width, closeSidebar, openSidebar, handleResize} = useSidebar({
     initialWidth,
     minWidth,
     maxWidth,
@@ -28,7 +28,7 @@ export const SidebarView: React.FC<SidebarProps> = ({
   };
 
   const sidebarStyles = "bg-white shadow-md shadow-lightgray"
-  const commonStyles = "h-full";
+  const commonStyles = "h-full min-h-screen";
 
   return (
     <>
@@ -39,30 +39,32 @@ export const SidebarView: React.FC<SidebarProps> = ({
             sidebarStyles,
             commonStyles,
           )}
-          style={{ width }}
+          style={{width}}
         >
-          <div className="flex justify-end p-2">
-            <CaretRight width={24} height={24} onClick={closeSidebar} />
+          <div className={"relative"}>
+            <div className="flex justify-end p-2">
+              <CaretRight width={24} height={24} onClick={closeSidebar}/>
+            </div>
+
+            {/* Content */}
+            <div className="p-4">{children}</div>
+
+            {/* Resize Handle */}
+            <div
+              className={cn(
+                "absolute top-0 left-0 w-1 cursor-ew-resize",
+                "bg-gray-500",
+                commonStyles,
+              )}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                document.addEventListener('mousemove', onDrag);
+                document.addEventListener('mouseup', () => {
+                  document.removeEventListener('mousemove', onDrag);
+                }, {once: true});
+              }}
+            />
           </div>
-
-          {/* Content */}
-          <div className="p-4">{children}</div>
-
-          {/* Resize Handle */}
-          <div
-            className={cn(
-              "absolute top-0 left-0 w-1 cursor-ew-resize",
-              "bg-gray-500",
-              commonStyles,
-            )}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              document.addEventListener('mousemove', onDrag);
-              document.addEventListener('mouseup', () => {
-                document.removeEventListener('mousemove', onDrag);
-              }, { once: true });
-            }}
-          />
         </div>
       ) : (
         <div
@@ -74,7 +76,7 @@ export const SidebarView: React.FC<SidebarProps> = ({
           )}
         >
           <div className="flex justify-center pt-2">
-            <CaretLeft width={24} height={24} onClick={openSidebar} />
+            <CaretLeft width={24} height={24} onClick={openSidebar}/>
           </div>
         </div>
       )}

@@ -25,6 +25,7 @@
     "@types/chrome": "^0.0.270",
     "@types/react-syntax-highlighter": "^15.5.13",
     "axios": "^1.7.5",
+    "cheerio": "^1.0.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.30",
