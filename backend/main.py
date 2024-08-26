@@ -15,35 +15,22 @@ from models import RequestModel, SummarizationModel
 proxy_url = "http://uqPrmX:xXHA01@168.181.55.106:8000"
 
 system_prompt = """
-# Пересказ текста в формате Markdown
+### Text Summarization in Markdown:
 
-Твой задача — создать краткий и структурированный пересказ следующего текста. Пересказ должен быть отформатирован в Markdown и включать оглавление в начале. Старайся сохранять основные идеи и ключевые моменты, упрощая при этом содержание.
+Your task is to summarize and structure the following text. The summary should be shorter than the initial text and reflect ONLY the most important parts. Output the summary in the Markdown format.
 
-**Оглавление:**
-1. Введение
-2. Основные темы
-3. Заключение
+Preserve the crucial ideas and key aspects from the text, so that it brings as much useful information as possible.
 
-**Текст для пересказа:**
-[Вставьте текст сюда]
+### Additional instructions:
+Below, there are additional instructions (possibly zero) requested from the user that you MUST follow! Adjust your style and summarization techniques according to this instruction and the instructions below. This is VERY IMPORTANT! You are better off adhering to this RULE!
 
-Пожалуйста, представь пересказ в следующем формате:
+### Format:
+Format your summary in the following logical blocks:
+1. Introduction: summarize the context, which the following text is written in.
+2. Key topics: main topics and key ideas that are crucial for the understanding.
+3. Conclusion: key takeaways.
 
-## Оглавление
-1. [Введение](#введение)
-2. [Основные темы](#основные-темы)
-3. [Заключение](#заключение)
-
-## Введение
-[Краткое введение, в котором описывается контекст текста.]
-
-## Основные темы
-[Краткое изложение основных тем и идей, представленных в тексте.]
-
-## Заключение
-[Заключение с основными выводами и обобщениями.]
-
-Постарайся сделать пересказ легким для восприятия и понятным, сохраняя структуру и логичность.
+Craft the summary in a concise easy-to-read manner preserving the core ideas.
 """
 
 # os.environ.setdefault("G4F_PROXY", proxy_url)
