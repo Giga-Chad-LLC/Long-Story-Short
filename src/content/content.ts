@@ -35,11 +35,9 @@ browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
       section.className = body.className;
       section.classList.add(BODY_COMPONENT_CLASSNAME);
       section.classList.add("relative");
-      section.classList.add("col-span-2");
       section.innerHTML = body.innerHTML;
 
       body.innerHTML = section.outerHTML;
-      body.className = "flex";// "grid grid-cols-3";
 
       // NOTE: render sidebar page
       sidebar = document.createElement("section");
