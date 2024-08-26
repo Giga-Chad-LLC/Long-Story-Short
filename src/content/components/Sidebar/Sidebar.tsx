@@ -24,16 +24,16 @@ export const Sidebar = ({payload}: SidebarProps) => {
   const [finished, setFinished] = useState(false);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
-  const body = document.querySelector('body > section.' + BODY_COMPONENT_CLASSNAME);
-  const text = domElementToText(body);
-  console.log(text)
   useEffect(() => {
+    const body = document.querySelector('body > section.' + BODY_COMPONENT_CLASSNAME);
+    const text = domElementToText(body);
+
     const queryParams: Record<string, string> = {
       api: payload.request.api,
       model: payload.request.model,
       token: payload.request.token,
       objective: payload.objective,
-      text: text,
+      text: text.slice(0, 5000),
     }
 
     const params = new URLSearchParams(queryParams);
@@ -72,7 +72,7 @@ export const Sidebar = ({payload}: SidebarProps) => {
         return false;
       });
     });
-  }, [setFinished, setAnswerParts]);
+  }, [setFinished, setAnswerParts, payload]);
 
   const handleCopy = useCallback((text: string) => {
     navigator.clipboard.writeText(text);
@@ -93,6 +93,7 @@ export const Sidebar = ({payload}: SidebarProps) => {
       }
 
       <ReactMarkdown
+        className={"prose prose-pre:p-0 prose-pre:bg-zinc-700"}
         rehypePlugins={[rehypeRaw] as PluggableList}
         remarkPlugins={[remarkGfm]}
         components={{
@@ -100,8 +101,8 @@ export const Sidebar = ({payload}: SidebarProps) => {
             const match = /language-(\w+)/.exec(className || "");
             return match ? (
               <div className="code-block">
-                <div className="code-block-header text-white flex justify-between p-2">
-                  <span className="code-block-language text-zinc-900">{match[1]}</span>
+                <div className="code-block-header text-white flex justify-between p-2 bg-[#272822] border-b-1 border-b-zinc-600 rounded-t-[0.3em]">
+                  <span className="code-block-language">{match[1]}</span>
                   <Button
                     size="sm"
                     color="primary"
@@ -112,7 +113,7 @@ export const Sidebar = ({payload}: SidebarProps) => {
                     Copy
                   </Button>
                 </div>
-                <div className="[&>div]:!m-0">
+                <div className="[&>div]:!m-0 [&>div]:!rounded-t-none">
                   <SyntaxHighlighter
                     style={okaidia}
                     language={match[1]}

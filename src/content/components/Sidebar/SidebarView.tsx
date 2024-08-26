@@ -35,7 +35,7 @@ export const SidebarView: React.FC<SidebarProps> = ({
       {isOpen ? (
         <div
           className={cn(
-            "fixed top-0 right-0 z-[10000] overflow-auto",
+            "fixed top-0 right-0 z-[10000] overflow-auto duration-500",
             sidebarStyles,
             commonStyles,
           )}

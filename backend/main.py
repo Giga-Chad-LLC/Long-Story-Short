@@ -5,7 +5,7 @@ from typing import AsyncGenerator, Literal, Union, List
 from openai import OpenAI, DefaultHttpxClient
 import httpx
 from sse_starlette.sse import EventSourceResponse
-
+import json
 from fastapi import FastAPI, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -37,6 +37,9 @@ Craft the summary in a concise easy-to-read manner preserving the core ideas.
 
 # os.environ.setdefault("G4F_PROXY", proxy_url)
 # client = Client()
+
+with open('guide.json', 'r', encoding='utf-8') as f:
+  guide = json.load(f)
 
 app = FastAPI()
 
@@ -118,7 +121,7 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
                     "role": "system",
                     "content": data.objective,
                 }
-            ] + [{
+            ] +guide+ [{
                 "role": "user",
                 "content": data.text
             }]

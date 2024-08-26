@@ -5,13 +5,76 @@
 #long-story-short-summary-sidebar table {
   width: 100%;
   border-collapse: collapse;
+  margin: 1em 0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-#long-story-short-summary-sidebar th, #long-story-short-summary-sidebar td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#long-story-short-summary-sidebar th {
+/* Стили для заголовков таблицы */
+#long-story-short-summary-sidebar table th {
   background-color: #f4f4f4;
+  color: #333;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Стили для ячеек таблицы */
+#long-story-short-summary-sidebar table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Стили для строк таблицы */
+#long-story-short-summary-sidebar table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#long-story-short-summary-sidebar table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Стили для заголовков */
+#long-story-short-summary-sidebar h1 {
+  font-size: 2em;
+  color: #333;
+  margin: 0 0 0.5em;
+}
+
+#long-story-short-summary-sidebar h2 {
+  font-size: 1.75em;
+  color: #333;
+  margin: 0 0 0.5em;
+}
+
+#long-story-short-summary-sidebar h3 {
+  font-size: 1.5em;
+  color: #333;
+  margin: 0 0 0.5em;
+}
+
+#long-story-short-summary-sidebar h4 {
+  font-size: 1.25em;
+  color: #333;
+  margin: 0 0 0.5em;
+}
+
+#long-story-short-summary-sidebar h5 {
+  font-size: 1em;
+  color: #333;
+  margin: 0 0 0.5em;
+}
+
+#long-story-short-summary-sidebar h6 {
+  font-size: 0.875em;
+  color: #333;
+  margin: 0 0 0.5em;
+}
+
+/* Стили для текста */
+#long-story-short-summary-sidebar p {
+  line-height: 1.6;
+  margin: 0 0 1em;
+  color: #666;
 }
