@@ -10,6 +10,8 @@ import {routes, SERVER_API_URL} from "../../../shared/protocol/apis.ts";
 import {SummarizationRequestPayload} from "../../../types";
 import {Button} from "@nextui-org/button";
 import {PluggableList} from "react-markdown/lib/react-markdown";
+import {domElementToText} from "../../../util";
+import {BODY_COMPONENT_CLASSNAME} from "../../constants.ts";
 
 
 interface SidebarProps {
@@ -21,13 +23,16 @@ export const Sidebar = ({payload}: SidebarProps) => {
   const [, setFinished] = useState(false);
   const [parts, setAnswerParts] = useState<string[]>([]);
 
+  const body = document.querySelector('body > section.' + BODY_COMPONENT_CLASSNAME);
+  const text = domElementToText(body);
+  console.log(text)
   useEffect(() => {
     const queryParams: Record<string, string> = {
       api: payload.request.api,
       model: payload.request.model,
       token: payload.request.token,
       objective: payload.objective,
-      text: "This text is about mammoths! They all have died. Unfortunately.",
+      text: text,
     }
 
     const params = new URLSearchParams(queryParams);
@@ -35,9 +40,6 @@ export const Sidebar = ({payload}: SidebarProps) => {
     payload.instructions.forEach(instruction => params.append("instructions", instruction));
 
     const query = params.toString();
-
-    console.log("instructions:", payload.instructions.join(","))
-    console.log("query:", query)
 
     fetch(`${SERVER_API_URL}/${routes.summarize}?${query}`, {
       method: "GET",

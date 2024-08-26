@@ -2,12 +2,8 @@ import os
 import asyncio
 import json
 from typing import AsyncGenerator, Literal, Union, List
-
-# from g4f.client import Client
-# from g4f.Provider import Blackbox
 from openai import OpenAI, DefaultHttpxClient
 import httpx
-
 from sse_starlette.sse import EventSourceResponse
 
 from fastapi import FastAPI, Query, Depends
@@ -16,8 +12,39 @@ from pydantic import BaseModel
 
 from models import RequestModel, SummarizationModel
 
-
 proxy_url = "http://uqPrmX:xXHA01@168.181.55.106:8000"
+
+system_prompt = """
+# Пересказ текста в формате Markdown
+
+Твой задача — создать краткий и структурированный пересказ следующего текста. Пересказ должен быть отформатирован в Markdown и включать оглавление в начале. Старайся сохранять основные идеи и ключевые моменты, упрощая при этом содержание.
+
+**Оглавление:**
+1. Введение
+2. Основные темы
+3. Заключение
+
+**Текст для пересказа:**
+[Вставьте текст сюда]
+
+Пожалуйста, представь пересказ в следующем формате:
+
+## Оглавление
+1. [Введение](#введение)
+2. [Основные темы](#основные-темы)
+3. [Заключение](#заключение)
+
+## Введение
+[Краткое введение, в котором описывается контекст текста.]
+
+## Основные темы
+[Краткое изложение основных тем и идей, представленных в тексте.]
+
+## Заключение
+[Заключение с основными выводами и обобщениями.]
+
+Постарайся сделать пересказ легким для восприятия и понятным, сохраняя структуру и логичность.
+"""
 
 # os.environ.setdefault("G4F_PROXY", proxy_url)
 # client = Client()
@@ -96,7 +123,7 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
             messages=[
                 {
                     "role": "system",
-                    "content": "You must summarize the following text"
+                    "content": system_prompt
                 },
                 {
                     "role": "system",
@@ -150,9 +177,8 @@ console.log(greet('World'));
 | engine | engine to be used for processing templates. Handlebars is the default. |
 | ext    | extension to be used for dest files. |"""
 
-        for chunk in response:
-#             content = chunk.choices[0].delta.content
-            content = chunk
+        for chunk in stream:
+            content = chunk.choices[0].delta.content
             if content:
                 yield StreamChunk(reason='CHUNK', content=content)
             else:
