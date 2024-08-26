@@ -1,7 +1,7 @@
 import { atom } from '@reatom/core';
 import {summarizationSettings} from "../../../data/summarization-settings.ts";
 import {withLocalStorage} from "@reatom/persist-web-storage";
-import {ISummarizationInstruction} from "../../../types";
+import {ISummarizationInstruction} from "../../../../shared/types";
 
 
 // summarization settings data

@@ -3,7 +3,7 @@ import {createRoot} from 'react-dom/client'
 import {NextUIProvider} from "@nextui-org/system";
 
 import App from './App.tsx'
-import './styles/globals.css'
+import './globals.css'
 import {reatomContext} from '@reatom/npm-react';
 import {createCtx} from "@reatom/core";
 

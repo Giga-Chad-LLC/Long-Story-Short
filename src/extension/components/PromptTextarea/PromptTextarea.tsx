@@ -1,4 +1,4 @@
-import {promptAtom} from "../../../store/settings/summarization/promptAtom.ts";
+import {promptAtom} from "../../store/settings/summarization/promptAtom.ts";
 import {useAtom} from "@reatom/npm-react";
 import {Textarea} from "@nextui-org/input";
 

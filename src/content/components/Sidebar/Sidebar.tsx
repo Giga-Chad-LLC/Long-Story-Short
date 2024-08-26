@@ -1,20 +1,20 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect} from "react";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {okaidia} from "react-syntax-highlighter/dist/esm/styles/prism";
-import {parseStreamResponse} from "../../../util/parseStreamResponse.ts";
 import ReactMarkdown from "react-markdown";
 import {SidebarView} from "./SidebarView.tsx";
 import {routes, SERVER_API_URL} from "../../../shared/protocol/apis.ts";
-import {SummarizationRequestPayload} from "../../../types";
+import {SummarizationRequestPayload} from "../../../shared/types";
 import {Button} from "@nextui-org/button";
 import {PluggableList} from "react-markdown/lib/react-markdown";
-import {domElementToText} from "../../../util";
+import {domElementToText} from "../../../shared/util";
 import {BODY_COMPONENT_CLASSNAME} from "../../constants.ts";
 import { readingTime } from 'reading-time-estimator';
-import {useAtom} from "@reatom/npm-react";
+import {useAction, useAtom} from "@reatom/npm-react";
 import {readingStatsAtom} from "../../store/readingStats.ts";
+import {generateSummaryAction, generateSummaryAtom} from "../../store/generateSummary.ts";
 
 
 interface SidebarProps {
@@ -24,7 +24,8 @@ interface SidebarProps {
 
 export const Sidebar = ({payload}: SidebarProps) => {
   const [,setStats] = useAtom(readingStatsAtom);
-  const [parts, setAnswerParts] = useState<string[]>([]);
+  const [parts, setAnswerParts] = useAtom(generateSummaryAtom);
+  const generateSummary  = useAction(generateSummaryAction);
 
   useEffect(() => {
     const body = document.querySelector('body > section.' + BODY_COMPONENT_CLASSNAME);
@@ -48,31 +49,9 @@ export const Sidebar = ({payload}: SidebarProps) => {
     }
 
     const query = params.toString();
-
-    fetch(`${SERVER_API_URL}/${routes.summarize}?${query}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }).then(async (res) => {
-      await parseStreamResponse(res, (done, data) => {
-        if (done) {
-          return true;
-        }
-
-        switch (data.reason) {
-          case "CHUNK": {
-            setAnswerParts((prev) => [...prev, data.content]);
-            break;
-          }
-          case "END": {
-            break;
-          }
-        }
-        return false;
-      });
-    });
-  }, [setAnswerParts, payload]);
+    const url = `${SERVER_API_URL}/${routes.summarize}?${query}`;
+    generateSummary(url);
+  }, [generateSummary, setAnswerParts, payload]);
 
   const handleCopy = useCallback((text: string) => {
     navigator.clipboard.writeText(text);

@@ -5,12 +5,12 @@ import {
   ModalBody, ModalFooter,
 } from "@nextui-org/modal";
 import {Select, SelectItem} from "@nextui-org/select";
-import {supportedAiAPIs} from "../../../data/llm-apis.ts";
+import {supportedAiAPIs} from "../../data/llm-apis.ts";
 import {Input} from "@nextui-org/input";
-import {aiApiAtom} from "../../../store/settings/ai/ApiAtom.ts";
+import {aiApiAtom} from "../../store/settings/ai/ApiAtom.ts";
 import {useAtom} from "@reatom/npm-react";
-import {tokenAtom} from "../../../store/settings/ai/TokenAtom.ts";
-import {modelAtom} from "../../../store/settings/ai/ModelAtom.ts";
+import {tokenAtom} from "../../store/settings/ai/TokenAtom.ts";
+import {modelAtom} from "../../store/settings/ai/ModelAtom.ts";
 import {useEffect} from "react";
 
 

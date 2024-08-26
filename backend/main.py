@@ -2,7 +2,7 @@ import os
 import asyncio
 import json
 from typing import AsyncGenerator, Literal, Union, List
-from openai import OpenAI, DefaultHttpxClient
+from openai import AsyncOpenAI, DefaultAsyncHttpxClient
 import httpx
 from sse_starlette.sse import EventSourceResponse
 from fastapi import FastAPI, Query, Depends
@@ -13,7 +13,7 @@ from models import RequestModel, SummarizationModel
 
 app = FastAPI()
 
-http_client = DefaultHttpxClient(
+http_client = DefaultAsyncHttpxClient(
     proxies=PROXY_URL,
     transport=httpx.HTTPTransport(local_address="0.0.0.0")
 )
@@ -69,12 +69,12 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
         nonlocal data
 
         # TODO: try catch the implementation
-        client = OpenAI(
+        client = AsyncOpenAI(
             api_key=data.request.token,
             http_client=http_client,
         )
 
-        stream = client.chat.completions.create(
+        stream = await client.chat.completions.create(
             model=data.request.model,
             stream=True,
             messages=[
@@ -91,7 +91,7 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
                 "content": data.text
             }]
         )
-        for chunk in stream:
+        async for chunk in stream:
             content = chunk.choices[0].delta.content
             if content:
                 yield StreamChunk(reason='CHUNK', content=content)

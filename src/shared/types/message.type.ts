@@ -7,7 +7,6 @@ export interface SelectorPayload extends PayloadBase {
 
 export interface EmptyPayload extends PayloadBase {}
 
-
 export interface SummarizationRequestPayload extends PayloadBase {
   request: {
     api: string

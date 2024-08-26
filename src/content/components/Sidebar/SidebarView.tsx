@@ -6,20 +6,17 @@ import {useAtom} from "@reatom/npm-react";
 import {readingStatsAtom} from "../../store/readingStats.ts";
 
 interface SidebarProps {
-  initialWidth?: number;
   minWidth?: number;
   maxWidth?: number;
   children: React.ReactNode;
 }
 
-export const SidebarView: React.FC<SidebarProps> = ({
-                                                      initialWidth = 300,
+export const SidebarView= ({
                                                       minWidth = 200,
                                                       maxWidth = 600,
                                                       children,
-                                                    }) => {
+                                                    }: SidebarProps) => {
   const {isOpen, width, closeSidebar, openSidebar, handleResize} = useSidebar({
-    initialWidth,
     minWidth,
     maxWidth,
   });

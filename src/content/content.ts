@@ -1,8 +1,8 @@
 import * as browser from "webextension-polyfill";
 import ContentPage from "./pages/ContentPage";
-import {PayloadBase, SelectorPayload, SummarizationRequestPayload, TabMessage} from "../types";
-import {mountReactElement} from "../util";
-import {messageActions} from "../data/message-actions.ts";
+import {PayloadBase, SelectorPayload, SummarizationRequestPayload, TabMessage} from "../shared/types";
+import {mountReactElement} from "../shared/util";
+import {messageActions} from "../extension/data/message-actions.ts";
 import {BODY_COMPONENT_CLASSNAME, SIDEBAR_COMPONENT_ID} from "./constants.ts";
 
 console.log("Content script successfully loaded");
@@ -11,9 +11,8 @@ console.log("Content script successfully loaded");
 browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
   const msg = message as TabMessage<PayloadBase>;
 
-  if (msg.action === "getElement" && (msg.payload as SelectorPayload).selector) {
-    const elementHtml = getElement((msg.payload as SelectorPayload).selector!);
-    sendResponse({html: elementHtml});
+  if (msg.action === messageActions.getHostname) {
+    sendResponse(window.location.hostname);
     return true;
   }
 

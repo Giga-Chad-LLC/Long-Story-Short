@@ -1,5 +1,5 @@
 import { test } from "bun:test";
-import {Message} from "../src/types";
+import {Message} from "../src/shared/types";
 
 test("common", () => {
   const msg: Message = {

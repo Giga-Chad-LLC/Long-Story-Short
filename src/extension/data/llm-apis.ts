@@ -1,4 +1,4 @@
-import {SupportedAiAPI} from "../types";
+import {SupportedAiAPI} from "../../shared/types";
 
 export const supportedAiAPIs: SupportedAiAPI[] = [
    {

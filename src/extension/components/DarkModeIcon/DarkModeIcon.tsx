@@ -1,5 +1,5 @@
 import {useAtom} from "@reatom/npm-react";
-import {darkModeAtom} from "../../../store/darkModeAtom.ts";
+import {darkModeAtom} from "../../store/darkModeAtom.ts";
 import {MoonIcon, SunIcon} from "../../../shared/icons";
 
 export const DarkModeIcon = () => {

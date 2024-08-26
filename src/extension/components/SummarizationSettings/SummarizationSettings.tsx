@@ -3,22 +3,18 @@ import {Button} from "@nextui-org/button";
 import {Tooltip} from "@nextui-org/tooltip";
 import cn from "classnames";
 import {PromptTextarea} from "../PromptTextarea/PromptTextarea.tsx";
-import {useCallback, useEffect, useState} from "react";
-import {ISummarizationInstruction, SummarizationRequestPayload} from "../../../types";
+import {useCallback, useMemo} from "react";
+import {ISummarizationInstruction, SummarizationRequestPayload} from "../../../shared/types";
 import {useAtom} from "@reatom/npm-react";
-import {summarizationInstructionsAtom} from "../../../store/settings/summarization/SummarizationInstructionsAtom.ts";
+import {summarizationInstructionsAtom} from "../../store/settings/summarization/SummarizationInstructionsAtom.ts";
 import {MessageApi} from "../../../shared/protocol/MessageApi.ts";
-import {messageActions} from "../../../data/message-actions.ts";
-import {promptAtom} from "../../../store/settings/summarization/promptAtom.ts";
-import {aiApiAtom} from "../../../store/settings/ai/ApiAtom.ts";
-import {modelAtom} from "../../../store/settings/ai/ModelAtom.ts";
-import {tokenAtom} from "../../../store/settings/ai/TokenAtom.ts";
-
+import {messageActions} from "../../data/message-actions.ts";
+import {promptAtom} from "../../store/settings/summarization/promptAtom.ts";
+import {aiApiAtom} from "../../store/settings/ai/ApiAtom.ts";
+import {modelAtom} from "../../store/settings/ai/ModelAtom.ts";
+import {tokenAtom} from "../../store/settings/ai/TokenAtom.ts";
 
 const SummarizationSettings = () => {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-
   const [api] = useAtom(aiApiAtom)
   const [model] = useAtom(modelAtom)
   const [token] = useAtom(tokenAtom)
@@ -26,29 +22,18 @@ const SummarizationSettings = () => {
   const [promptText] = useAtom(promptAtom);
   const [instructions, setInstructions] = useAtom(summarizationInstructionsAtom);
 
-  // TODO: check correctness of this implementation
-  useEffect(() => {
-    if (errorMessage) {
-      // clear error
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      const id = setTimeout(() => setErrorMessage(null), 5000)
-      setTimeoutId(id);
-    }
-  }, [errorMessage]);
+  const isInvalid = useMemo(() => {
+    return !api || !model || !token
+  }, [api, model, token]);
 
-  const handleClick = useCallback(async () => {
-    if (!api || !model || !token) {
-      setErrorMessage(`Either api, model, or token were are unset (${api ? '' : 'api missing'}, ${model ? '' : 'model missing'}, ${token ? '' : 'token missing'})`);
-      return;
-    }
+  const errorMessage = useMemo(() => {
+    if (!isInvalid) return null;
+    return `Either api, model, or token were are unset (${api ? '' : 'api missing'}, ${model ? '' : 'model missing'}, ${token ? '' : 'token missing'})`;
+  },[api, model, token, isInvalid])
 
-    console.log("selected instructions", instructions
-      .filter(item => item.selected))
-
+  const handleClick = useCallback( () => {
     // send data to content script
-    await MessageApi.send<SummarizationRequestPayload>(messageActions.requestSummarization, {
+    MessageApi.send<SummarizationRequestPayload>(messageActions.requestSummarization, {
       request: {
         api: api!.id,
         model: model!,
@@ -56,17 +41,14 @@ const SummarizationSettings = () => {
       },
       objective: promptText,
       instructions: instructions
-                      .filter(item => item.selected)
-                      .map(item => item.instruction),
+        .filter(item => item.selected)
+        .map(item => item.instruction),
     });
-
-
   }, [api, model, token, promptText, instructions]);
 
   return (
     <div className="flex flex-col gap-8">
-      {/* TODO: how normal error notification */}
-      {errorMessage ? <span className="text-red-700">{errorMessage}</span> : null}
+      {errorMessage && <span className="text-red-700">{errorMessage}</span>}
 
       <PromptTextarea/>
 
@@ -86,8 +68,11 @@ const SummarizationSettings = () => {
       </div>
 
       <div className="flex flex-col gap-4">
-        <Button color="primary" variant="shadow">Summarize in 10 words</Button>
-        <Button color="primary" variant="shadow" onClick={handleClick}>Summarize the content</Button>
+        <Button isDisabled={isInvalid} color="primary" variant="shadow">Summarize in 10 words</Button>
+        <Button isDisabled={isInvalid} color="primary" variant="shadow" onClick={() => {
+          window.close()
+          handleClick();
+        }}>Summarize the content</Button>
       </div>
     </div>
   );
@@ -107,7 +92,8 @@ const ChipsContainer = ({className, instructions, onChipClick}: ChipsContainerPr
       className,
     )}>
       {instructions.map((item, index) => (
-        <Tooltip key={index} placement={index > 2 ? "bottom" : "top"} showArrow={true} delay={1200} content={item.description}>
+        <Tooltip key={index} placement={index > 2 ? "bottom" : "top"} showArrow={true} delay={1200}
+                 content={item.description}>
           <Chip
             color={item.selected ? "primary" : "default"}
             variant="shadow"

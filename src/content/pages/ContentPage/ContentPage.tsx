@@ -2,7 +2,7 @@ import {Sidebar} from "../../components/Sidebar/Sidebar.tsx";
 import {NextUIProvider} from "@nextui-org/system";
 import {reatomContext} from '@reatom/npm-react';
 import {ctx} from "../../store/context.ts";
-import {SummarizationRequestPayload} from "../../../types";
+import {SummarizationRequestPayload} from "../../../shared/types";
 
 interface ContentPageProps {
   payload: SummarizationRequestPayload

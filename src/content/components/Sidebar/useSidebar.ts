@@ -1,18 +1,18 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
+import {useAtom} from "@reatom/npm-react";
+import {sidebarWidthAtom} from "../../store/sidebarWidth.ts";
 
 interface UseSidebarProps {
-  initialWidth: number
   minWidth: number
   maxWidth: number
 }
 
 export function useSidebar({
-  initialWidth,
-  minWidth,
-  maxWidth,
-}: UseSidebarProps) {
+                             minWidth,
+                             maxWidth,
+                           }: UseSidebarProps) {
   const [isOpen, setIsOpen] = useState(true);
-  const [width, setWidth] = useState(initialWidth);
+  const [width, setWidth] = useAtom(sidebarWidthAtom);
 
   const openSidebar = () => setIsOpen(true);
   const closeSidebar = () => setIsOpen(false);
