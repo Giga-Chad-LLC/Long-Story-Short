@@ -78,7 +78,7 @@ def get_query_params(
     token: str = Query(..., description="Token parameter"),
     objective: str = Query(..., description="Objective parameter"),
     text: str = Query(..., description="Text parameter"),
-    instructions: List[str] = Query(..., description="Comma-separated list of instructions"),
+    instructions: List[str] = Query(..., description="instructions"),
 ) -> SummarizationModel:
 #     instructions_list = comma_separated_to_list(instructions)
     print("instructions", instructions)

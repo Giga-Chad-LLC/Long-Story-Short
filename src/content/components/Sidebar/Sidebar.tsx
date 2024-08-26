@@ -37,7 +37,12 @@ export const Sidebar = ({payload}: SidebarProps) => {
 
     const params = new URLSearchParams(queryParams);
     // insert instructions
-    payload.instructions.forEach(instruction => params.append("instructions", instruction));
+    if (payload.instructions.length > 0) {
+      payload.instructions.forEach(instruction => params.append("instructions", instruction));
+    }
+    else {
+      params.append("instructions", "");
+    }
 
     const query = params.toString();
 
