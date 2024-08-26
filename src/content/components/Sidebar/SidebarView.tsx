@@ -4,7 +4,6 @@ import cn from "classnames";
 import {CaretLeft, CaretRight} from "../../../shared/icons";
 import {useAtom} from "@reatom/npm-react";
 import {readingStatsAtom} from "../../store/readingStats.ts";
-import { Progress } from '@nextui-org/react';
 
 interface SidebarProps {
   initialWidth?: number;
@@ -84,9 +83,6 @@ export const SidebarView: React.FC<SidebarProps> = ({
               }, {once: true});
             }}
           />
-        </div>
-        <div className={"p-2"}>
-          <Progress color="default" aria-label="Loading..." value={70} />
         </div>
         <div>
           {/* Content */}
