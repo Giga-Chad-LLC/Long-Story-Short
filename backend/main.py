@@ -8,7 +8,7 @@ from sse_starlette.sse import EventSourceResponse
 from fastapi import FastAPI, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from constants import SYSTEM_PROMPT, PROXY_URL, EXAMPLE_MESSAGES
+from constants import SYSTEM_PROMPT, PROXY_URL, EXAMPLE_MESSAGES, EXAMPLE_SHORT_MESSAGES, SYSTEM_PROMPT_SHORT
 from models import RequestModel, SummarizationModel
 
 app = FastAPI()
@@ -18,7 +18,6 @@ http_client = DefaultAsyncHttpxClient(
     transport=httpx.HTTPTransport(local_address="0.0.0.0")
 )
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,17 +25,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class StreamChunk(BaseModel):
     reason: Union[Literal['CHUNK'], Literal['END']]
     content: str
 
+
 def get_query_params(
-    api: str = Query(..., description="API parameter"),
-    model: str = Query(..., description="Model parameter"),
-    token: str = Query(..., description="Token parameter"),
-    objective: str = Query(..., description="Objective parameter"),
-    text: str = Query(..., description="Text parameter"),
-    instructions: List[str] = Query(..., description="instructions"),
+        api: str = Query(..., description="API parameter"),
+        model: str = Query(..., description="Model parameter"),
+        token: str = Query(..., description="Token parameter"),
+        objective: str = Query(..., description="Objective parameter"),
+        text: str = Query(..., description="Text parameter"),
+        instructions: List[str] = Query(..., description="instructions"),
 ) -> SummarizationModel:
     print("instructions", instructions)
 
@@ -64,7 +65,7 @@ def get_query_params(
         }
     },
 })
-async def summarize(data: SummarizationModel = Depends(get_query_params)):
+async def summarize(data: SummarizationModel = Depends(get_query_params), short_summary: bool = False):
     async def response_generator() -> AsyncGenerator[StreamChunk, None]:
         nonlocal data
 
@@ -74,22 +75,32 @@ async def summarize(data: SummarizationModel = Depends(get_query_params)):
             http_client=http_client,
         )
 
+        messages = []
+
+        if short_summary:
+            messages.extend([{
+                "role": "system",
+                "content": SYSTEM_PROMPT_SHORT
+            }])
+            messages.extend(EXAMPLE_SHORT_MESSAGES)
+        else:
+            messages.extend([{
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            }, {
+                "role": "system",
+                "content": data.objective,
+            }])
+            messages.extend(EXAMPLE_MESSAGES)
+
+        messages.append({
+            "role": "user",
+            "content": data.text
+        })
         stream = await client.chat.completions.create(
             model=data.request.model,
             stream=True,
-            messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT
-                },
-                {
-                    "role": "system",
-                    "content": data.objective,
-                }
-            ] + EXAMPLE_MESSAGES + [{
-                "role": "user",
-                "content": data.text
-            }]
+            messages=messages
         )
         async for chunk in stream:
             content = chunk.choices[0].delta.content

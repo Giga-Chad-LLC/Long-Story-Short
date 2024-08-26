@@ -11,6 +11,12 @@ console.log("Content script successfully loaded");
 browser.runtime.onMessage.addListener((message: unknown, _, sendResponse) => {
   const msg = message as TabMessage<PayloadBase>;
 
+  if (msg.action === messageActions.getElementBySelector) {
+    const elementHtml = getElement((msg.payload as SelectorPayload).selector);
+    sendResponse({html: elementHtml});
+    return true;
+  }
+
   if (msg.action === messageActions.getHostname) {
     sendResponse(window.location.hostname);
     return true;

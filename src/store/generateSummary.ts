@@ -1,11 +1,12 @@
 import { reatomAsync, withAbort } from '@reatom/async'
 import {atom} from "@reatom/core";
-import {parseStreamResponse} from "../../shared/util/parseStreamResponse.ts";
+import {parseStreamResponse} from "../shared/util/parseStreamResponse.ts";
+import {routes, SERVER_API_URL} from "../shared/protocol/apis.ts";
 
 export const generateSummaryAtom = atom<string[]>([], "generateSummaryAtom");
 
-export const generateSummaryAction = reatomAsync(async (ctx, url: string) => {
-  fetch(url, {
+export const generateSummaryAction = reatomAsync(async (ctx, query: string) => {
+  fetch(`${SERVER_API_URL}/${routes.summarize}?${query}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json"

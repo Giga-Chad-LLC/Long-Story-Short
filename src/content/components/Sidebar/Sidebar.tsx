@@ -5,7 +5,6 @@ import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {okaidia} from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactMarkdown from "react-markdown";
 import {SidebarView} from "./SidebarView.tsx";
-import {routes, SERVER_API_URL} from "../../../shared/protocol/apis.ts";
 import {SummarizationRequestPayload} from "../../../shared/types";
 import {Button} from "@nextui-org/button";
 import {PluggableList} from "react-markdown/lib/react-markdown";
@@ -14,7 +13,7 @@ import {BODY_COMPONENT_CLASSNAME} from "../../constants.ts";
 import { readingTime } from 'reading-time-estimator';
 import {useAction, useAtom} from "@reatom/npm-react";
 import {readingStatsAtom} from "../../store/readingStats.ts";
-import {generateSummaryAction, generateSummaryAtom} from "../../store/generateSummary.ts";
+import {generateSummaryAction, generateSummaryAtom} from "../../../store/generateSummary.ts";
 
 
 interface SidebarProps {
@@ -24,7 +23,7 @@ interface SidebarProps {
 
 export const Sidebar = ({payload}: SidebarProps) => {
   const [,setStats] = useAtom(readingStatsAtom);
-  const [parts, setAnswerParts] = useAtom(generateSummaryAtom);
+  const [parts] = useAtom(generateSummaryAtom);
   const generateSummary  = useAction(generateSummaryAction);
 
   useEffect(() => {
@@ -47,11 +46,8 @@ export const Sidebar = ({payload}: SidebarProps) => {
     else {
       params.append("instructions", "");
     }
-
-    const query = params.toString();
-    const url = `${SERVER_API_URL}/${routes.summarize}?${query}`;
-    generateSummary(url);
-  }, [generateSummary, setAnswerParts, payload]);
+    generateSummary(params.toString());
+  }, [generateSummary, payload]);
 
   const handleCopy = useCallback((text: string) => {
     navigator.clipboard.writeText(text);

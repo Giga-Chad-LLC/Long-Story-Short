@@ -2,7 +2,7 @@ export interface PayloadBase {}
 
 // payload types
 export interface SelectorPayload extends PayloadBase {
-  selector?: string
+  selector: string
 }
 
 export interface EmptyPayload extends PayloadBase {}
