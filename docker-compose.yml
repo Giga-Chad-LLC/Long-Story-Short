@@ -1,0 +1,14 @@
+version: '3.9'
+
+volumes:
+  postgres_data: { }
+
+services:
+  backend:
+    container_name: backend
+    build: ./backend
+    restart: always
+    ports:
+      - "8001:8000"
+    environment:
+      PROXY_URL: http://login:password@168.181.55.102:8000

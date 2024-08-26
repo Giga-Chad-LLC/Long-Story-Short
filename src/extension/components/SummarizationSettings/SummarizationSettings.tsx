@@ -59,6 +59,8 @@ const SummarizationSettings = () => {
                       .filter(item => item.selected)
                       .map(item => item.instruction),
     });
+
+
   }, [api, model, token, promptText, instructions]);
 
   return (
